@@ -90,7 +90,7 @@ export function EarthExplorer() {
       <div ref={stage} className="earth-stage" aria-label="Земля и четыре программы фонда">
         <div className="earth-halo" aria-hidden="true" />
         <div className="earth-visual" aria-hidden="true">
-          <img className="earth-fallback" src="/assets/earth-static.webp" alt="" width="1200" height="1200" fetchPriority="high" style={{ opacity: ready && !failed ? 0 : 1 }} />
+          <img className="earth-fallback" src="/assets/earth-static.webp" srcSet="/assets/earth-static.webp 1200w, /assets/earth-static-2400.webp 2400w" sizes="(max-width: 760px) 92vw, (max-width: 1100px) 83vw, 74vw" alt="" width="2400" height="2400" fetchPriority="high" style={{ opacity: ready && !failed ? 0 : 1 }} />
           {enabled && started && !failed && <div className="earth-canvas" style={{ opacity: ready ? 1 : 0 }}>
             <SceneBoundary onError={onFailure}>
               <Scene onReady={onReady} onFailure={onFailure} lowPower={lowPower} moving={moving} selected={selected} labels={labels} capture={capture} />
@@ -128,7 +128,7 @@ export function EarthExplorer() {
           <h3>{p.name}</h3><p>{p.summary}</p><Link href={`/programs/${p.slug}`} className="text-link">О программе</Link>
         </div>)}
       </div>
-      <p className="geography-caption">Огоньки обозначают программы, а не места оказания помощи.</p>
+      <p className="geography-caption">Огоньки обозначают программы, а не места оказания помощи. <a href="/assets/earth/CREDITS.txt">Источники изображения</a></p>
     </div>
   );
 }

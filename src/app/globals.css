@@ -1327,7 +1327,7 @@ img {
 .earth-visual { mask-image: linear-gradient(to bottom, #000 0%, #000 63%, transparent 73%), linear-gradient(to right, transparent 0%, #000 14%); mask-composite: intersect; }
 .earth-halo { inset: 1% 1%; background: radial-gradient(circle, transparent 44%, #d6e9f170 49%, transparent 54%); filter: blur(14px); }
 .earth-explorer .orb-label { top: 50%; left: 42px; transform: translateY(-50%); max-width: clamp(130px, 11.35vw, 180px); padding: 3px 5px; border: 0; border-radius: 0; background: transparent; box-shadow: none; font: 400 clamp(18px, 1.45vw, 23px)/1.05 var(--serif); text-align: left; text-shadow: 0 0 5px #fafaf7, 0 0 10px #fafaf7, 0 0 20px #fafaf7, 0 0 28px #fafaf7; }
-.earth-explorer .orb-label::before { content: ""; position: absolute; inset: -10px -13px; background: #fafaf7a6; filter: blur(12px); z-index: -1; pointer-events: none; }
+.earth-explorer .orb-label::before { content: ""; position: absolute; inset: -6px -8px; background: #fafaf790; filter: blur(9px); z-index: -1; pointer-events: none; }
 .earth-explorer .orb-button:hover .orb-label, .earth-explorer .orb-button:focus-visible .orb-label, .earth-explorer .orb-button.is-selected .orb-label { color: #142e42; background: transparent; text-decoration: underline; text-decoration-color: #b18a51; text-underline-offset: 5px; }
 .earth-explorer .earth-caption { position: absolute; bottom: 24px; right: calc(7vw + 8%); padding: 0; gap: 14px; z-index: 4; }
 .earth-explorer .earth-caption p { color: var(--muted); font-size: 12px; }

@@ -38,25 +38,26 @@ void main(){vec4 p=modelViewMatrix*vec4(position,1.); vNormal=normalize(normalMa
 const atmosphereFragment = `varying vec3 vNormal; varying vec3 vView;
 void main(){vec3 normal=normalize(vNormal); float facing=max(dot(normal,normalize(vView)),0.); float rim=pow(1.-facing,1.9); float edge=smoothstep(0.,.08,facing); float sun=max(dot(normal,normalize(vec3(-.7,.8,.35))),0.); vec3 air=mix(vec3(.28,.55,.78),vec3(.85,.95,1.),sun); gl_FragColor=vec4(air,rim*edge*(.15+.85*sun)*.85);}`;
 // The source's polar infill converges at the UV pole; fade only that cloud cap.
-function softenCloudPoles(shader: { vertexShader: string; fragmentShader: string }) {
+function prepareCloudLayer(shader: { vertexShader: string; fragmentShader: string }) {
   shader.vertexShader = "varying float vCloudLatitude;\n" + shader.vertexShader.replace("#include <begin_vertex>", "#include <begin_vertex>\nvCloudLatitude = position.y / 1.012;");
-  shader.fragmentShader = "varying float vCloudLatitude;\n" + shader.fragmentShader.replace("#include <alphamap_fragment>", "#include <alphamap_fragment>\ndiffuseColor.a *= 1. - smoothstep(.92, .99, abs(vCloudLatitude));");
+  shader.fragmentShader = "varying float vCloudLatitude;\n" + shader.fragmentShader.replace("#include <alphamap_fragment>", "#ifdef USE_ALPHAMAP\ndiffuseColor.a *= pow(texture2D(alphaMap, vAlphaMapUv).g, 1.35);\n#endif\ndiffuseColor.a *= 1. - smoothstep(.92, .99, abs(vCloudLatitude));");
 }
 function Globe(props: SceneProps) {
   const { lowPower, moving, selected, labels, onReady, onFailure } = props;
   const { camera, size, invalidate, gl } = useThree();
+  const surfaceSize = lowPower ? 2048 : gl.capabilities.maxTextureSize >= 8192 ? 8192 : 4096;
   const maps = useLoader(TextureLoader, [
-    `/assets/earth/surface-${lowPower ? 2048 : 4096}.webp`,
-    `/assets/earth/clouds-${lowPower ? 1024 : 2048}.webp`,
+    `/assets/earth/surface-${surfaceSize}.webp`,
+    `/assets/earth/clouds-${lowPower ? 2048 : 4096}.webp`,
   ]);
   // Own clones so unmount releases GPU textures without poisoning useLoader's cache.
   const [surface, clouds] = useMemo(() => {
     const surface = maps[0].clone(), clouds = maps[1].clone();
-    surface.colorSpace = SRGBColorSpace; surface.anisotropy = lowPower ? 2 : 4;
-    clouds.colorSpace = NoColorSpace;
+    surface.colorSpace = SRGBColorSpace; surface.anisotropy = Math.min(lowPower ? 4 : 8, gl.capabilities.getMaxAnisotropy());
+    clouds.colorSpace = NoColorSpace; clouds.anisotropy = surface.anisotropy;
     surface.needsUpdate = clouds.needsUpdate = true;
     return [surface, clouds];
-  }, [maps, lowPower]);
+  }, [maps, lowPower, gl]);
   const starTexture = useMemo(makeStarTexture, []);
   const earth = useRef<Group>(null), cloudSphere = useRef<Mesh>(null);
   const stars = useRef<Array<Sprite | null>>([]), time = useRef(0), frames = useRef(0);
@@ -101,16 +102,16 @@ function Globe(props: SceneProps) {
   return (
     <>
       <ambientLight intensity={1.05} />
-      <directionalLight position={[4, 5, -1]} color="#fff9f0" intensity={4.4} />
+      <directionalLight position={[4, 5, -1]} color="#fff9f0" intensity={3.6} />
       <directionalLight position={[-2, 1, -4]} color="#d5eaff" intensity={.2} />
       <group ref={earth}>
         <mesh>
-          <sphereGeometry args={[1, lowPower ? 64 : 96, lowPower ? 48 : 64]} />
+          <sphereGeometry args={[1, lowPower ? 64 : 128, lowPower ? 48 : 96]} />
           <meshStandardMaterial map={surface} roughness={.94} metalness={0} />
         </mesh>
         <mesh ref={cloudSphere}>
           <sphereGeometry args={[1.012, 64, 48]} />
-          <meshStandardMaterial color="#ffffff" alphaMap={clouds} onBeforeCompile={softenCloudPoles} transparent opacity={.42} depthWrite={false} roughness={1} />
+          <meshStandardMaterial color="#ffffff" alphaMap={clouds} onBeforeCompile={prepareCloudLayer} transparent opacity={.88} depthWrite={false} roughness={1} />
         </mesh>
         <mesh>
           <sphereGeometry args={[1.006, 96, 64]} />
@@ -129,13 +130,13 @@ export default function EarthScene(props: SceneProps) {
   return (
     <Canvas
       frameloop="demand"
-      dpr={props.lowPower ? 1 : [1, 1.5]}
+      dpr={props.lowPower ? [1, 1.5] : [1, 2]}
       camera={{ position: CAMERA_POSITION, fov: EARTH_VIEW.fov, near: .1, far: 20 }}
       gl={{ alpha: true, antialias: !props.lowPower, powerPreference: "low-power", preserveDrawingBuffer: props.capture }}
       onCreated={({ camera, gl }) => {
         camera.lookAt(0, 0, 0);
         gl.setClearColor(new Color("#fafaf7"), 0);
-        gl.toneMappingExposure = 1.14;
+        gl.toneMappingExposure = 1.12;
       }}
       fallback={null}
     >

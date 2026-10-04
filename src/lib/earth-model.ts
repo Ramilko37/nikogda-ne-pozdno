@@ -1,5 +1,6 @@
 /** Shared by the renderer and its HTML/static projection. No WebGL dependency. */
-export const EARTH_VIEW = { latitude: 50, longitude: 90, distance: 3.8, fov: 32 };
+// A longer lens preserves the silhouette while reducing central perspective enlargement.
+export const EARTH_VIEW = { latitude: 47, longitude: 85, distance: 6, fov: 20.3 };
 export type Point3 = [number, number, number];
 export function geographicPoint(latitude: number, longitude: number, radius = 1): Point3 {
   const lat = latitude * Math.PI / 180, lon = longitude * Math.PI / 180;

@@ -82,7 +82,7 @@ test('lost context and texture failure keep the static globe and working control
   await expect(page.locator('.earth-explorer')).toHaveAttribute('data-failed','true');
   await page.getByRole('button',{name:programs[2].name,exact:true}).click();
   await expect(page.locator('#selected-program h3')).toHaveText(programs[2].name);
-  expect(await page.locator('.earth-fallback').evaluate(e=>(e as HTMLImageElement).naturalWidth)).toBe(1200);
+  expect(await page.locator('.earth-fallback').evaluate(e=>(e as HTMLImageElement).complete && (e as HTMLImageElement).naturalWidth > 0)).toBe(true);
 });
 
 test('layout, label collisions, HTML accessibility and normal console health',async({page},testInfo)=>{
@@ -95,6 +95,7 @@ test('layout, label collisions, HTML accessibility and normal console health',as
   const result=await page.evaluate(()=>{
     const rects=[...document.querySelectorAll('.orb-label')].filter(el=>getComputedStyle(el).display!=='none').map(el=>el.getBoundingClientRect());
     return {
+      canvasAspect:(() => { const canvas=document.querySelector('canvas')!; const r=canvas.getBoundingClientRect(); return {css:r.width/r.height,buffer:canvas.width/canvas.height}; })(),
       overflow:document.documentElement.scrollWidth>innerWidth,
       overlaps:rects.some((a,i)=>rects.slice(i+1).some(b=>a.left<b.right&&a.right>b.left&&a.top<b.bottom&&a.bottom>b.top)),
       clipped:rects.some(r=>r.left<0||r.right>innerWidth),
@@ -102,6 +103,8 @@ test('layout, label collisions, HTML accessibility and normal console health',as
       targets:[...document.querySelectorAll('.orb-button')].map(e=>({w:e.getBoundingClientRect().width,h:e.getBoundingClientRect().height})),
     };
   });
+  expect(result.canvasAspect.css).toBeCloseTo(1,3);
+  expect(result.canvasAspect.buffer).toBeCloseTo(result.canvasAspect.css,3);
   expect(result.overflow).toBe(false);expect(result.overlaps).toBe(false);expect(result.clipped).toBe(false);expect(result.hiddenButtons).toBe(false);
   result.targets.forEach(r=>{expect(r.w).toBeGreaterThanOrEqual(44);expect(r.h).toBeGreaterThanOrEqual(44)});
   expect(errors).toEqual([]);

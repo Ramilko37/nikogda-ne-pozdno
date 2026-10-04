@@ -1,0 +1,16 @@
+Earth surface: NASA Earth Observatory — Blue Marble Next Generation, July 2004, with topography.
+Reto Stöckli / Robert Simmon. Original map: 21600 x 10800.
+https://science.nasa.gov/earth/earth-observatory/blue-marble-next-generation/base-topography/
+https://www.nasa.gov/nasa-brand-center/images-and-media/
+Adaptations: resized and compressed to WebP; deep ocean lifted to a natural blue.
+
+Cloud map: Solar System Scope / INOVE. Based on NASA imagery.
+https://www.solarsystemscope.com/textures/
+Licensed under Creative Commons Attribution 4.0 International (CC BY 4.0):
+https://creativecommons.org/licenses/by/4.0/
+Adaptations: converted to grayscale WebP at 4096 x 2048 and 2048 x 1024;
+used as a transparent cloud layer with polar fading.
+
+The static images are renders of this same scene and include these materials.
+These are historical composites, not current weather imagery.
+No endorsement by NASA or INOVE is implied.

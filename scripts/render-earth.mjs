@@ -12,11 +12,13 @@ try {
   url.searchParams.set('earth-capture', '');
   await page.goto(url.href);
   await page.waitForSelector('[data-renderer="webgl"]', { timeout: 30000 });
-  await page.addStyleTag({ content: '.earth-stage { width: 1200px !important; height: 1200px !important; }' });
-  await page.waitForFunction(() => document.querySelector('canvas')?.width >= 1200);
+  await page.addStyleTag({ content: '.earth-stage { width: 2400px !important; height: 2400px !important; }' });
+  await page.waitForFunction(() => document.querySelector('canvas')?.width >= 2400);
   // Allow resize invalidation to paint into the preserved framebuffer.
   await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
   const png = await page.locator('canvas').evaluate(canvas => canvas.toDataURL('image/png'));
-  await sharp(Buffer.from(png.split(',')[1], 'base64')).resize(1200, 1200).webp({ quality: 88 }).toFile('public/assets/earth-static.webp');
+  for (const width of [1200, 2400]) {
+    await sharp(Buffer.from(png.split(',')[1], 'base64')).resize(width, width).webp({ quality: 94 }).toFile(`public/assets/earth-static${width === 1200 ? '' : '-2400'}.webp`);
+  }
   console.log('Saved static render from the production 3D scene: public/assets/earth-static.webp');
 } finally { await browser.close(); }
