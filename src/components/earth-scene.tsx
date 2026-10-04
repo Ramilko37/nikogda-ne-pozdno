@@ -1,50 +1,139 @@
 "use client";
-import { Canvas, useLoader } from "@react-three/fiber";
-import { TextureLoader, SRGBColorSpace } from "three";
-import { Suspense, useEffect } from "react";
-function Globe({ onReady }: { onReady: () => void }) {
-  const texture = useLoader(TextureLoader, "/assets/earth-texture.png");
-  texture.colorSpace = SRGBColorSpace;
-  useEffect(() => {
-    onReady();
-  }, [onReady]);
-  return (
-    <>
-      <ambientLight intensity={1.9} />
-      <directionalLight position={[-3, 6, -4]} intensity={2} />
-      <mesh>
-        <sphereGeometry args={[1.7, 64, 48]} />
-        <meshStandardMaterial map={texture} roughness={1} metalness={0} />
-      </mesh>
-    </>
-  );
-}
-export default function EarthScene({
-  onReady,
-  onFailure,
-  lowPower,
-}: {
+import { Canvas, useFrame, useLoader, useThree } from "@react-three/fiber";
+import { Suspense, useEffect, useMemo, useRef, type RefObject } from "react";
+import { CanvasTexture, Color, Group, Mesh, NoColorSpace, SRGBColorSpace, Sprite, TextureLoader, Vector3 } from "three";
+import { CAMERA_POSITION, EARTH_VIEW, starPoint } from "@/lib/earth-model";
+import { programs } from "@/lib/content";
+
+type SceneProps = {
   onReady: () => void;
   onFailure: () => void;
   lowPower: boolean;
-}) {
+  moving: boolean;
+  selected: string | null;
+  labels: RefObject<Record<string, HTMLDivElement | null>>;
+  capture?: boolean;
+};
+function makeStarTexture() {
+  const canvas = document.createElement("canvas");
+  canvas.width = canvas.height = 128;
+  const ctx = canvas.getContext("2d")!;
+  const halo = ctx.createRadialGradient(64, 64, 0, 64, 64, 64);
+  halo.addColorStop(0, "rgba(255,255,244,1)");
+  halo.addColorStop(.1, "rgba(255,247,216,1)");
+  halo.addColorStop(.24, "rgba(242,192,103,.7)");
+  halo.addColorStop(.55, "rgba(236,185,99,.19)");
+  halo.addColorStop(1, "rgba(236,185,99,0)");
+  ctx.fillStyle = halo; ctx.fillRect(0,0,128,128);
+  ctx.fillStyle = "rgba(255,250,229,.9)";
+  ctx.beginPath();
+  ctx.moveTo(64,21); ctx.quadraticCurveTo(67,60,104,64);
+  ctx.quadraticCurveTo(67,68,64,107); ctx.quadraticCurveTo(61,68,24,64);
+  ctx.quadraticCurveTo(61,60,64,21); ctx.fill();
+  const texture = new CanvasTexture(canvas); texture.colorSpace = SRGBColorSpace;
+  return texture;
+}
+const atmosphereVertex = `varying vec3 vNormal; varying vec3 vView;
+void main(){vec4 p=modelViewMatrix*vec4(position,1.); vNormal=normalize(normalMatrix*normal);vView=normalize(-p.xyz);gl_Position=projectionMatrix*p;}`;
+const atmosphereFragment = `varying vec3 vNormal; varying vec3 vView;
+void main(){float rim=pow(1.-max(dot(normalize(vNormal),normalize(vView)),0.),3.5);float edge=smoothstep(0.,.17,max(dot(normalize(vNormal),normalize(vView)),0.));gl_FragColor=vec4(.66,.80,.89,rim*edge*.38);}`;
+function Globe(props: SceneProps) {
+  const { lowPower, moving, selected, labels, onReady, onFailure } = props;
+  const { camera, size, invalidate, gl } = useThree();
+  const maps = useLoader(TextureLoader, [
+    `/assets/earth/surface-${lowPower ? 2048 : 4096}.webp`,
+    `/assets/earth/clouds-${lowPower ? 1024 : 2048}.webp`,
+  ]);
+  // Own clones so unmount releases GPU textures without poisoning useLoader's cache.
+  const [surface, clouds] = useMemo(() => {
+    const surface = maps[0].clone(), clouds = maps[1].clone();
+    surface.colorSpace = SRGBColorSpace; surface.anisotropy = lowPower ? 2 : 4;
+    clouds.colorSpace = NoColorSpace;
+    surface.needsUpdate = clouds.needsUpdate = true;
+    return [surface, clouds];
+  }, [maps, lowPower]);
+  const starTexture = useMemo(makeStarTexture, []);
+  const earth = useRef<Group>(null), cloudSphere = useRef<Mesh>(null);
+  const stars = useRef<Array<Sprite | null>>([]), time = useRef(0), frames = useRef(0);
+  const vector = useMemo(() => new Vector3(), []);
+  useEffect(() => () => { surface.dispose(); clouds.dispose(); starTexture.dispose(); }, [surface, clouds, starTexture]);
+  useEffect(() => {
+    const canvas = gl.domElement;
+    const lost = (event: Event) => { event.preventDefault(); onFailure(); };
+    canvas.addEventListener("webglcontextlost", lost);
+    return () => canvas.removeEventListener("webglcontextlost", lost);
+  }, [gl, onFailure]);
+  useEffect(() => { invalidate(); }, [moving, selected, size, invalidate]);
+  useFrame((_, delta) => {
+    if (moving) time.current += Math.min(delta, .04);
+    const t = time.current;
+    if (earth.current) {
+      earth.current.rotation.y = Math.sin(t * .075) * .012;
+      earth.current.rotation.x = Math.sin(t * .06) * .006;
+      earth.current.updateMatrixWorld();
+    }
+    if (cloudSphere.current) cloudSphere.current.rotation.y = t * .002;
+    programs.forEach((program, i) => {
+      const point = starPoint(program.id, t);
+      const star = stars.current[i];
+      if (star) {
+        star.position.set(...point);
+        star.scale.setScalar(program.id === selected ? .22 : .16);
+      }
+      vector.set(...point);
+      if (earth.current) vector.applyMatrix4(earth.current.matrixWorld);
+      vector.project(camera);
+      const label = labels.current[program.id];
+      if (label) {
+        label.style.setProperty("--star-x", `${(vector.x * .5 + .5) * size.width}px`);
+        label.style.setProperty("--star-y", `${(-vector.y * .5 + .5) * size.height}px`);
+      }
+    });
+    // Publish ready only after the first actual render, including paused scenes.
+    if (++frames.current === 2) onReady();
+    if (moving || frames.current < 2) invalidate();
+  });
+  return (
+    <>
+      <ambientLight intensity={1.1} />
+      <directionalLight position={[4, 5, 1]} color="#fff5e8" intensity={2.7} />
+      <directionalLight position={[3, 1, -4]} color="#c9e6ff" intensity={.5} />
+      <group ref={earth}>
+        <mesh>
+          <sphereGeometry args={[1, lowPower ? 64 : 96, lowPower ? 48 : 64]} />
+          <meshStandardMaterial map={surface} roughness={.94} metalness={0} />
+        </mesh>
+        <mesh ref={cloudSphere}>
+          <sphereGeometry args={[1.012, 64, 48]} />
+          <meshStandardMaterial color="#ffffff" alphaMap={clouds} transparent opacity={.46} depthWrite={false} roughness={1} />
+        </mesh>
+        <mesh>
+          <sphereGeometry args={[1.018, 96, 64]} />
+          <shaderMaterial vertexShader={atmosphereVertex} fragmentShader={atmosphereFragment} transparent depthWrite={false} />
+        </mesh>
+        {!props.capture && programs.map((p, i) => (
+          <sprite key={p.id} ref={(el) => { stars.current[i] = el; }} position={starPoint(p.id)} scale={.16}>
+            <spriteMaterial map={starTexture} transparent depthWrite={false} toneMapped={false} />
+          </sprite>
+        ))}
+      </group>
+    </>
+  );
+}
+export default function EarthScene(props: SceneProps) {
   return (
     <Canvas
       frameloop="demand"
-      dpr={lowPower ? 1 : [1, 1.5]}
-      camera={{ position: [0, 4.42, -3.1], fov: 43 }}
-      gl={{ alpha: true, antialias: !lowPower, powerPreference: "low-power" }}
-      onCreated={({ gl, camera }) => {
+      dpr={props.lowPower ? 1 : [1, 1.5]}
+      camera={{ position: CAMERA_POSITION, fov: EARTH_VIEW.fov, near: .1, far: 20 }}
+      gl={{ alpha: true, antialias: !props.lowPower, powerPreference: "low-power", preserveDrawingBuffer: props.capture }}
+      onCreated={({ camera, gl }) => {
         camera.lookAt(0, 0, 0);
-        gl.domElement.addEventListener("webglcontextlost", onFailure, {
-          once: true,
-        });
+        gl.setClearColor(new Color("#fafaf7"), 0);
       }}
       fallback={null}
     >
-      <Suspense fallback={null}>
-        <Globe onReady={onReady} />
-      </Suspense>
+      <Suspense fallback={null}><Globe {...props} /></Suspense>
     </Canvas>
   );
 }

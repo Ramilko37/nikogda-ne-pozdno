@@ -1,27 +1,35 @@
-import fs from "node:fs/promises";
-import { geoPath, geoEquirectangular, geoOrthographic } from "d3-geo";
-import sharp from "sharp";
-const land = JSON.parse(
-  await fs.readFile("public/assets/land.geojson", "utf8"),
-);
-const texture = geoPath(
-  geoEquirectangular()
-    .scale(2048 / (2 * Math.PI))
-    .translate([1024, 512]),
-);
-await sharp(
-  Buffer.from(
-    `<svg xmlns="http://www.w3.org/2000/svg" width="2048" height="1024"><rect width="2048" height="1024" fill="#a7cad9"/><path d="${texture(land)}" fill="#c2cdb9" stroke="#d5dbca" stroke-width="1.5"/></svg>`,
-  ),
-)
-  .png()
-  .toFile("public/assets/earth-texture.png");
-const projection = geoOrthographic()
-  .rotate([-90, -55])
-  .scale(355)
-  .translate([400, 400]);
-const path = geoPath(projection);
-const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800"><defs><radialGradient id="o" cx="35%" cy="25%" r="80%"><stop stop-color="#d4e7ee"/><stop offset=".65" stop-color="#a7cad9"/><stop offset="1" stop-color="#6e98af"/></radialGradient><radialGradient id="s" cx="30%" cy="20%" r="85%"><stop stop-color="#fff" stop-opacity=".3"/><stop offset=".6" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#264d67" stop-opacity=".38"/></radialGradient><filter id="glow"><feGaussianBlur stdDeviation="9"/></filter></defs><circle cx="400" cy="400" r="359" fill="#baddeb" opacity=".8" filter="url(#glow)"/><circle cx="400" cy="400" r="355" fill="url(#o)"/><path d="${path(land)}" fill="#c2cdb9" stroke="#d5dbca" stroke-width=".6"/><circle cx="400" cy="400" r="355" fill="url(#s)"/></svg>`;
-await sharp(Buffer.from(svg))
-  .webp({ quality: 90 })
-  .toFile("public/assets/earth-static.webp");
+/** Prepare genuine NASA maps. Never generates the retired two-colour globe. */
+import fs from 'node:fs/promises';
+import { execFileSync } from 'node:child_process';
+import sharp from 'sharp';
+const sources = {
+  surface: 'https://assets.science.nasa.gov/content/dam/science/esd/eo/images/bmng/bmng-base/july/world.200407.3x5400x2700.jpg',
+  clouds: 'https://eoimages.gsfc.nasa.gov/images/imagerecords/57000/57747/cloud_combined_2048.jpg',
+};
+await fs.mkdir('.earth-cache', { recursive: true });
+await fs.mkdir('public/assets/earth', { recursive: true });
+for (const [key, url] of Object.entries(sources)) {
+  const path = `.earth-cache/${key}.jpg`;
+  try { await fs.access(path); } catch { execFileSync('curl', ['-fLsS', '--max-time', '120', url, '-o', path]); }
+  const metadata = await sharp(path).metadata();
+  if (metadata.width / metadata.height !== 2) throw new Error(`${key}: expected 2:1 NASA map`);
+}
+// Blue Marble's base map ocean is nearly black. Lift only deep ocean pixels
+// towards a restrained natural blue; retain the photographed land detail.
+const { data, info } = await sharp('.earth-cache/surface.jpg').resize(4096, 2048).removeAlpha().raw().toBuffer({ resolveWithObject: true });
+for (let i = 0; i < data.length; i += 3) {
+  const r=data[i], g=data[i+1], b=data[i+2];
+  if (b > r * 1.4 && b > g * 1.3 && r < 18 && g < 25) {
+    const mix = Math.max(0, 1 - Math.max(r / 18, g / 25));
+    data[i] = Math.round(r*(1-mix)+31*mix);
+    data[i+1] = Math.round(g*(1-mix)+75*mix);
+    data[i+2] = Math.round(b*(1-mix)+103*mix);
+  }
+}
+for (const width of [4096, 2048]) {
+  await sharp(data,{raw:info}).resize(width,width/2).webp({quality:88}).toFile(`public/assets/earth/surface-${width}.webp`);
+}
+for (const width of [2048, 1024]) {
+  await sharp('.earth-cache/clouds.jpg').resize(width,width/2).grayscale().webp({quality:86}).toFile(`public/assets/earth/clouds-${width}.webp`);
+}
+console.log('NASA surface and cloud maps prepared. Static WebP is retained; regenerate with npm run assets:render against the running app.');

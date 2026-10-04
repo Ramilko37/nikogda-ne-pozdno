@@ -291,206 +291,42 @@ img {
   background: #b98b4f;
   margin-top: 6px;
 }
-.earth-explorer {
-  position: relative;
-  min-width: 0;
-  align-self: start;
-}
-.earth-stage {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 1.13;
-  isolation: isolate;
-}
-.earth-halo {
-  position: absolute;
-  inset: 7%;
-  border-radius: 50%;
-  background: #d5e9f38a;
-  filter: blur(32px);
-  z-index: -1;
-}
-.earth-visual {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
-.earth-fallback {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  transition: opacity 0.4s;
-}
-.earth-canvas {
-  position: absolute;
-  inset: 0;
-  filter: drop-shadow(0 0 18px #afd4e666);
-}
-.earth-canvas canvas {
-  touch-action: pan-y !important;
-}
-.orb-position {
-  position: absolute;
-  z-index: 3;
-  transform: translate(-50%, -50%);
-  animation: float 8s ease-in-out infinite;
-  animation-delay: var(--delay);
-  animation-play-state: paused;
-}
-.earth-explorer[data-moving="true"] .orb-position {
-  animation-play-state: running;
-}
-.orb-button {
-  display: flex;
-  align-items: center;
-  gap: 11px;
-  padding: 10px 11px;
-  min-height: 48px;
-  max-width: 230px;
-  border: 0;
-  border-radius: 12px;
-  background: transparent;
-  text-align: left;
-  color: #253746;
-  position: relative;
-}
-.orb-light {
-  display: block;
-  flex: 0 0 14px;
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background: radial-gradient(
-    circle at 38% 30%,
-    #fff 0,
-    #fff3d6 22%,
-    #edbd72 65%,
-    #c68c38 100%
-  );
-  box-shadow:
-    0 0 8px 3px #ffefc8,
-    0 0 20px 7px #f1cc9277;
-  transition: box-shadow 0.2s;
-}
-.orb-button:hover .orb-light,
-.orb-button.is-selected .orb-light {
-  box-shadow:
-    0 0 10px 4px #fff2d5,
-    0 0 26px 10px #e9ba7b88;
-}
-.orb-label {
-  font-family: var(--serif);
-  font-size: 21px;
-  line-height: 1.03;
-  letter-spacing: -0.02em;
-  background: #fafaf7ed;
-  padding: 8px 10px;
-  border-radius: 7px;
-  max-width: 165px;
-  box-shadow: 0 3px 18px #28496007;
-}
-.orb-button.is-selected .orb-label {
-  background: var(--ink);
-  color: white;
-}
-.orb-tooltip {
-  position: absolute;
-  top: calc(100% + 3px);
-  left: 0;
-  width: 235px;
-  font-size: 12px;
-  background: #fff;
-  padding: 15px 18px;
-  border-radius: 10px;
-  box-shadow: 0 10px 35px #25374622;
-  line-height: 1.6;
-  pointer-events: none;
-}
-.orb-position:has(.orb-tooltip) {
-  z-index: 6;
-}
-.earth-caption {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  margin-top: 4px;
-}
-.earth-caption p {
-  font-size: 12px;
-  margin: 0;
-  color: var(--ink);
-}
-.motion-control {
-  background: none;
-  border: 0;
-  display: flex;
-  gap: 7px;
-  align-items: center;
-  font-size: 11px;
-  min-height: 38px;
-  color: var(--muted);
-  padding: 8px;
-}
-.geography-caption {
-  font-size: 10px;
-  text-align: center;
-  margin: 0 0 15px;
-}
-.program-selector {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 5px;
-}
-.program-selector button {
-  border: 1px solid #cedce5;
-  background: transparent;
-  min-height: 44px;
-  border-radius: 30px;
-  padding: 7px 12px;
-  font-size: 11px;
-  color: var(--muted);
-}
-.program-selector button:hover,
-.program-selector button[aria-pressed="true"] {
-  border-color: var(--blue);
-  background: #e8f0f5;
-  color: var(--ink);
-}
-.selected-program {
-  position: relative;
-  margin-top: 18px;
-  background: white;
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  padding: 24px 30px;
-  box-shadow: 0 12px 35px #25374608;
-}
-.selected-program h3 {
-  font-size: 28px;
-  max-width: 90%;
-  margin-bottom: 15px;
-}
-.selected-program p {
-  font-size: 13px;
-  margin-bottom: 12px;
-}
-.selected-program .small-label {
-  font-size: 10px;
-}
-.close-card {
-  position: absolute;
-  right: 7px;
-  top: 7px;
-  border: 0;
-  background: none;
-  color: var(--ink);
-  font-size: 28px;
-  width: 44px;
-  height: 44px;
-}
+/* Hero globe: a fixed stage, projected HTML controls and a stable detail row. */
+.earth-explorer { position: relative; min-width: 0; align-self: start; }
+.hero .earth-stage { position: relative; width: 100%; aspect-ratio: 1.5; isolation: isolate; }
+.earth-halo { position: absolute; inset: 12% 8%; border-radius: 50%; background: radial-gradient(ellipse, #cbdfe95c, transparent 68%); filter: blur(22px); z-index: -1; }
+.earth-visual { position: absolute; inset: 0; pointer-events: none; }
+.earth-fallback { position: absolute; width: 100%; height: 100%; object-fit: contain; transition: opacity .6s ease; }
+.earth-canvas { position: absolute; inset: 0; transition: opacity .6s ease; }
+.earth-canvas canvas { touch-action: pan-y !important; }
+.orb-position { position: absolute; left: var(--star-x); top: var(--star-y); z-index: 3; transform: translate(-50%, -50%); }
+.earth-explorer .orb-button { position: relative; display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; min-height: 48px; padding: 0; border: 0; border-radius: 50%; background: transparent; color: var(--ink); }
+.earth-explorer .orb-label { position: absolute; top: 44px; left: 50%; transform: translateX(-50%); width: max-content; max-width: 210px; font-family: var(--sans); font-size: 13px; font-weight: 600; letter-spacing: 0; line-height: 1.4; text-align: center; padding: 8px 12px; border: 1px solid #ffffffb0; border-radius: 6px; background: #fafaf7f0; box-shadow: 0 3px 18px #243a4d0c; transition: background .18s; }
+.earth-explorer .orb-button:hover .orb-label, .earth-explorer .orb-button:focus-visible .orb-label { background: #fff; border-color: #c8a367; }
+.earth-explorer .orb-button.is-selected .orb-label { background: var(--ink); color: white; border-color: var(--ink); }
+.star-static { font-size: 35px; color: #fff9df; line-height: 1; text-shadow: 0 0 4px #be853a, 0 0 12px #f1c97d, 0 0 22px #ebc794; }
+.earth-explorer[data-renderer="webgl"] .star-static { opacity: 0; }
+.star-number { display: none; }
+.earth-explorer .earth-caption { display: flex; flex-direction: row; justify-content: space-between; align-items: center; gap: 10px; padding: 0 10px; margin: 0; }
+.earth-explorer .earth-caption p { font-size: 12px; margin: 0; color: var(--ink); }
+.motion-control { background: none; border: 0; display: inline-flex; align-items: center; justify-content: center; gap: 7px; font-size: 12px; min-height: 44px; color: var(--muted); padding: 7px; }
+.motion-control:disabled { opacity: .75; }
+.earth-explorer .geography-caption { font-size: 10px; line-height: 1.6; text-align: center; margin: 14px 0 0; }
+.earth-explorer .program-selector { display: flex; flex-wrap: wrap; justify-content: center; gap: 5px 7px; margin: 6px 0 14px; }
+.earth-explorer .program-selector button { border: 0; border-bottom: 1px solid #b7c9d3; border-radius: 0; background: transparent; min-height: 44px; padding: 5px 4px; font-size: 12px; line-height: 1.35; color: var(--muted); text-align: left; }
+.program-selector button > span { display: none; }
+.earth-explorer .program-selector button:hover, .earth-explorer .program-selector button[aria-pressed="true"] { border-color: #6e522b; color: var(--ink); background: #f5ead878; }
+.program-detail-slot { display: grid; border-top: 1px solid #c8d5db; border-bottom: 1px solid #c8d5db; }
+.program-detail-slot > * { grid-area: 1 / 1; min-width: 0; }
+.program-detail-intro { display: flex; align-items: center; gap: 22px; padding: 22px 28px; }
+.detail-spark { font-size: 36px; color: #af8551; }
+.program-detail-intro p { font-family: var(--serif); font-size: 28px; line-height: 1.08; letter-spacing: -.02em; color: var(--ink); margin-bottom: 9px; }
+.program-detail-intro span:not(.detail-spark) { font-size: 12px; color: var(--muted); }
+.earth-explorer .selected-program { position: relative; padding: 22px 42px 20px 22px; margin: 0; border: 0; border-radius: 0; background: #ffffff80; box-shadow: none; }
+.earth-explorer .selected-program h3 { font-size: 27px; line-height: 1.1; margin-bottom: 10px; max-width: none; }
+.earth-explorer .selected-program p { font-size: 13px; line-height: 1.65; margin-bottom: 6px; }
+.earth-explorer .selected-program .text-link { font-size: 12px; }
+.close-card { position: absolute; top: 3px; right: 0; width: 44px; height: 44px; border: 0; background: transparent; color: var(--ink); display: grid; place-items: center; }
 .about-section {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -1473,4 +1309,46 @@ img {
   .steps p {
     font-size: 14px;
   }
+}
+
+/* Keep the photo-real globe generous while the copy remains immediately readable. */
+.hero { padding-top: 16px; padding-bottom: 44px; background: radial-gradient(ellipse at 76% 33%, #e7f0f5 0, transparent 57%); }
+.hero-grid { grid-template-columns: 41% 59%; align-items: start; }
+.hero-copy { padding-top: 66px; padding-bottom: 40px; }
+@media (max-width: 1100px) and (min-width: 761px) {
+  .hero-grid { grid-template-columns: 40% 60%; gap: 0; }
+  .hero-copy { padding-top: 55px; padding-right: 15px; }
+  .hero h1 { font-size: 59px; }
+  .hero-actions { flex-wrap: wrap; gap: 12px; }
+  .earth-explorer .orb-label { font-size: 11px; padding: 6px 8px; max-width: 155px; }
+}
+@media (max-width: 760px) {
+  .hero { padding-top: 32px; padding-bottom: 36px; }
+  .hero-grid { grid-template-columns: minmax(0, 1fr); }
+  .hero-copy { padding: 0; }
+  .hero h1 { font-size: 60px; }
+  .hero-description { font-size: 15px; }
+  .hero-actions { gap: 22px; }
+  .hero-status { margin-top: 18px; }
+  .hero .earth-stage { margin-top: 16px; }
+  .earth-explorer .orb-label { display: none; }
+  .star-number { display: block; position: absolute; top: 36px; left: 50%; transform: translateX(-50%); border-radius: 50%; width: 20px; height: 20px; line-height: 19px; text-align: center; font-size: 10px; font-weight: 700; background: #fbfaf0; border: 1px solid #bf9b62; color: #334857; }
+  .orb-button.is-selected .star-number { color: white; background: var(--ink); }
+  .earth-explorer .earth-caption { flex-direction: column; gap: 0; }
+  .earth-explorer .earth-caption p { font-size: 12px; }
+  .earth-explorer .program-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 5px 14px; margin: 4px 0 18px; }
+  .earth-explorer .program-selector button { display: flex; align-items: center; gap: 8px; font-size: 12px; min-height: 48px; padding: 6px 2px; }
+  .program-selector button > span { display: inline; flex: 0 0 auto; font-size: 10px; color: #8a663b; }
+  .program-detail-intro { padding: 20px 10px; gap: 16px; }
+  .program-detail-intro p { font-size: 27px; }
+  .earth-explorer .selected-program { padding: 18px 36px 18px 10px; }
+  .earth-explorer .selected-program h3 { font-size: 27px; }
+  .earth-explorer .selected-program p { font-size: 13px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .earth-canvas, .earth-fallback { transition: none; }
+}
+
+@media (min-width: 761px) {
+  .earth-explorer .program-selector { display: none; }
 }
