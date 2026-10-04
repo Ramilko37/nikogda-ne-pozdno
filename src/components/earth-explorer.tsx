@@ -86,11 +86,11 @@ export function EarthExplorer() {
     onFocus: () => setFocused(id), onBlur: () => setFocused(null),
   });
   return (
-    <div ref={root} className="earth-explorer" data-moving={moving} data-renderer={ready && !failed ? "webgl" : "static"} data-failed={failed}>
+    <div ref={root} className="earth-explorer" data-moving={moving} data-renderer={ready && !failed ? "webgl" : "static"} data-failed={failed} data-selected={selected || undefined}>
       <div ref={stage} className="earth-stage" aria-label="Земля и четыре программы фонда">
         <div className="earth-halo" aria-hidden="true" />
         <div className="earth-visual" aria-hidden="true">
-          <img className="earth-fallback" src="/assets/earth-static.webp" alt="" width="1200" height="800" fetchPriority="high" style={{ opacity: ready && !failed ? 0 : 1 }} />
+          <img className="earth-fallback" src="/assets/earth-static.webp" alt="" width="1200" height="1200" fetchPriority="high" style={{ opacity: ready && !failed ? 0 : 1 }} />
           {enabled && started && !failed && <div className="earth-canvas" style={{ opacity: ready ? 1 : 0 }}>
             <SceneBoundary onError={onFailure}>
               <Scene onReady={onReady} onFailure={onFailure} lowPower={lowPower} moving={moving} selected={selected} labels={labels} capture={capture} />
@@ -99,7 +99,7 @@ export function EarthExplorer() {
         </div>
         {programs.map((p, i) => {
           const [x,y] = projectPoint(starPoint(p.id));
-          return <div className="orb-position" key={p.id} ref={(el) => { labels.current[p.id] = el; }} style={{ "--star-x": `${x}%`, "--star-y": `${y}%` } as CSSProperties}>
+          return <div className="orb-position" data-program={p.id} key={p.id} ref={(el) => { labels.current[p.id] = el; }} style={{ "--star-x": `${x}%`, "--star-y": `${y}%` } as CSSProperties}>
             <button className={`orb-button ${selected === p.id ? "is-selected" : ""}`} aria-label={p.name} aria-expanded={selected === p.id} aria-controls="program-detail" {...interaction(p.id)} onClick={(e) => choose(p.id, e.currentTarget)}>
               <span className="star-static" aria-hidden="true">✦</span>
               <span className="star-number" aria-hidden="true">{i+1}</span>
@@ -109,7 +109,7 @@ export function EarthExplorer() {
         })}
       </div>
       <div className="earth-caption">
-        <p>Каждый огонёк — возможность помочь</p>
+        <p>Четыре программы — четыре возможности помочь</p>
         <button className="motion-control" onClick={() => setPaused((p) => !p)} aria-pressed={paused || reduced} disabled={reduced || !enabled || failed}>
           {paused || reduced || !enabled || failed ? <Play size={14} /> : <Pause size={14} />}
           <span>{reduced || !enabled || failed ? "Без анимации" : paused ? "Включить анимацию" : "Остановить анимацию"}</span>

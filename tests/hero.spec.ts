@@ -46,7 +46,8 @@ test('WebGL projection stays stable while paused, motion resumes, hover/focus pa
   await star.focus();
   await expect(page.locator('.earth-explorer')).toHaveAttribute('data-moving','false');
   await page.getByRole('button',{name:'Остановить анимацию'}).focus();
-  await star.hover();
+  const target = await star.boundingBox();
+  await page.mouse.move(target!.x + target!.width / 2, target!.y + target!.height / 2);
   await expect(page.locator('.earth-explorer')).toHaveAttribute('data-moving','false');
   await page.mouse.move(0,0);
   await expect(page.locator('.earth-explorer')).toHaveAttribute('data-moving','true');

@@ -21,15 +21,15 @@ export default function Home() {
             </p>
             <div className="hero-actions">
               <Link href="/help" className="button">
-                Помочь фонду
+                Поддержать фонд
               </Link>
-              <Link href="/programs" className="text-link">
-                Наши программы
+              <Link href="/get-help" className="text-link">
+                Получить помощь
               </Link>
             </div>
             <div className="hero-status">
               <span />
-              Знакомьтесь с проектом программы на 2027 год
+              Проект программы на 2027 год
             </div>
           </div>
           <EarthExplorer />

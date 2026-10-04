@@ -12,11 +12,11 @@ try {
   url.searchParams.set('earth-capture', '');
   await page.goto(url.href);
   await page.waitForSelector('[data-renderer="webgl"]', { timeout: 30000 });
-  await page.addStyleTag({ content: '.earth-stage { width: 1200px !important; height: 800px !important; }' });
+  await page.addStyleTag({ content: '.earth-stage { width: 1200px !important; height: 1200px !important; }' });
   await page.waitForFunction(() => document.querySelector('canvas')?.width >= 1200);
   // Allow resize invalidation to paint into the preserved framebuffer.
   await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
   const png = await page.locator('canvas').evaluate(canvas => canvas.toDataURL('image/png'));
-  await sharp(Buffer.from(png.split(',')[1], 'base64')).resize(1200, 800).webp({ quality: 88 }).toFile('public/assets/earth-static.webp');
+  await sharp(Buffer.from(png.split(',')[1], 'base64')).resize(1200, 1200).webp({ quality: 88 }).toFile('public/assets/earth-static.webp');
   console.log('Saved static render from the production 3D scene: public/assets/earth-static.webp');
 } finally { await browser.close(); }

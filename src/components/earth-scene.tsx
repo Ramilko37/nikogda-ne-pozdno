@@ -36,7 +36,12 @@ function makeStarTexture() {
 const atmosphereVertex = `varying vec3 vNormal; varying vec3 vView;
 void main(){vec4 p=modelViewMatrix*vec4(position,1.); vNormal=normalize(normalMatrix*normal);vView=normalize(-p.xyz);gl_Position=projectionMatrix*p;}`;
 const atmosphereFragment = `varying vec3 vNormal; varying vec3 vView;
-void main(){float rim=pow(1.-max(dot(normalize(vNormal),normalize(vView)),0.),3.5);float edge=smoothstep(0.,.17,max(dot(normalize(vNormal),normalize(vView)),0.));gl_FragColor=vec4(.66,.80,.89,rim*edge*.38);}`;
+void main(){vec3 normal=normalize(vNormal); float facing=max(dot(normal,normalize(vView)),0.); float rim=pow(1.-facing,1.9); float edge=smoothstep(0.,.08,facing); float sun=max(dot(normal,normalize(vec3(-.7,.8,.35))),0.); vec3 air=mix(vec3(.28,.55,.78),vec3(.85,.95,1.),sun); gl_FragColor=vec4(air,rim*edge*(.15+.85*sun)*.85);}`;
+// The source's polar infill converges at the UV pole; fade only that cloud cap.
+function softenCloudPoles(shader: { vertexShader: string; fragmentShader: string }) {
+  shader.vertexShader = "varying float vCloudLatitude;\n" + shader.vertexShader.replace("#include <begin_vertex>", "#include <begin_vertex>\nvCloudLatitude = position.y / 1.012;");
+  shader.fragmentShader = "varying float vCloudLatitude;\n" + shader.fragmentShader.replace("#include <alphamap_fragment>", "#include <alphamap_fragment>\ndiffuseColor.a *= 1. - smoothstep(.92, .99, abs(vCloudLatitude));");
+}
 function Globe(props: SceneProps) {
   const { lowPower, moving, selected, labels, onReady, onFailure } = props;
   const { camera, size, invalidate, gl } = useThree();
@@ -78,7 +83,7 @@ function Globe(props: SceneProps) {
       const star = stars.current[i];
       if (star) {
         star.position.set(...point);
-        star.scale.setScalar(program.id === selected ? .22 : .16);
+        star.scale.setScalar(program.id === selected ? .115 : .08);
       }
       vector.set(...point);
       if (earth.current) vector.applyMatrix4(earth.current.matrixWorld);
@@ -95,9 +100,9 @@ function Globe(props: SceneProps) {
   });
   return (
     <>
-      <ambientLight intensity={1.1} />
-      <directionalLight position={[4, 5, 1]} color="#fff5e8" intensity={2.7} />
-      <directionalLight position={[3, 1, -4]} color="#c9e6ff" intensity={.5} />
+      <ambientLight intensity={1.05} />
+      <directionalLight position={[4, 5, -1]} color="#fff9f0" intensity={4.4} />
+      <directionalLight position={[-2, 1, -4]} color="#d5eaff" intensity={.2} />
       <group ref={earth}>
         <mesh>
           <sphereGeometry args={[1, lowPower ? 64 : 96, lowPower ? 48 : 64]} />
@@ -105,14 +110,14 @@ function Globe(props: SceneProps) {
         </mesh>
         <mesh ref={cloudSphere}>
           <sphereGeometry args={[1.012, 64, 48]} />
-          <meshStandardMaterial color="#ffffff" alphaMap={clouds} transparent opacity={.46} depthWrite={false} roughness={1} />
+          <meshStandardMaterial color="#ffffff" alphaMap={clouds} onBeforeCompile={softenCloudPoles} transparent opacity={.42} depthWrite={false} roughness={1} />
         </mesh>
         <mesh>
-          <sphereGeometry args={[1.018, 96, 64]} />
+          <sphereGeometry args={[1.006, 96, 64]} />
           <shaderMaterial vertexShader={atmosphereVertex} fragmentShader={atmosphereFragment} transparent depthWrite={false} />
         </mesh>
         {!props.capture && programs.map((p, i) => (
-          <sprite key={p.id} ref={(el) => { stars.current[i] = el; }} position={starPoint(p.id)} scale={.16}>
+          <sprite key={p.id} ref={(el) => { stars.current[i] = el; }} position={starPoint(p.id)} scale={.08}>
             <spriteMaterial map={starTexture} transparent depthWrite={false} toneMapped={false} />
           </sprite>
         ))}
@@ -130,6 +135,7 @@ export default function EarthScene(props: SceneProps) {
       onCreated={({ camera, gl }) => {
         camera.lookAt(0, 0, 0);
         gl.setClearColor(new Color("#fafaf7"), 0);
+        gl.toneMappingExposure = 1.14;
       }}
       fallback={null}
     >
