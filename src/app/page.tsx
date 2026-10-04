@@ -60,6 +60,16 @@ export default function Home() {
           <Link href="/about" className="text-link">
             Познакомиться с фондом
           </Link>
+          <div className="governance-summary">
+            <p>
+              Текущей работой фонда руководит генеральный директор. Совет фонда
+              утверждает программы и бюджет. Попечительский совет и Ревизор
+              выполняют надзорные и контрольные функции.
+            </p>
+            <Link href="/about#team" className="text-link">
+              Команда и управление
+            </Link>
+          </div>
         </div>
       </section>
       <section className="programs-section section">

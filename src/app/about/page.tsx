@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import Link from "next/link";
+import { TeamSection } from "@/components/team-section";
 import { PageIntro, SupportBand, StatusNote } from "@/components/ui";
 import { foundation } from "@/lib/content";
 export const metadata: Metadata = { title: "О фонде" };
@@ -33,13 +35,28 @@ export default function About() {
             подтверждении нуждаемости. Учредитель фонда и связанные лица могут
             пользоваться услугами только на равных условиях.
           </p>
-          <h3>Как планируется управлять программой</h3>
-          <p>
-            Программу и бюджет утверждает Совет фонда. Реализацию ведёт
-            генеральный директор через координаторов. Контроль предусмотрен со
-            стороны Совета фонда, Попечительского совета и Ревизора.
-          </p>
           <StatusNote />
+        </div>
+      </section>
+      <TeamSection />
+      <section className="container section article-layout" aria-labelledby="about-documents">
+        <h2 id="about-documents">Документы</h2>
+        <div className="prose">
+          <p>
+            Ознакомьтесь с проектом благотворительной программы на 2027 год
+            и предусмотренной отчётностью фонда.
+          </p>
+          <Link href="/reports" className="text-link">Документы и отчёты</Link>
+        </div>
+      </section>
+      <section className="container section article-layout" aria-labelledby="about-contacts">
+        <h2 id="about-contacts">Контакты</h2>
+        <div className="prose">
+          <p>
+            Телефон, электронная почта и адрес для обращений появятся после
+            подтверждения фондом. Отправка обращений через сайт пока недоступна.
+          </p>
+          <Link href="/contacts" className="text-link">Контакты фонда</Link>
         </div>
       </section>
       <SupportBand />

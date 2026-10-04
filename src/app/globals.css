@@ -718,6 +718,60 @@ img {
   gap: 100px;
   padding-top: 65px;
 }
+.governance-summary {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+}
+#team {
+  scroll-margin-top: 128px;
+  overflow-wrap: anywhere;
+}
+.team-section {
+  padding-top: 0;
+}
+.team-group {
+  padding-top: 32px;
+  margin-top: 40px;
+  border-top: 1px solid var(--line);
+  min-width: 0;
+}
+.team-group h3,
+.team-member {
+  overflow-wrap: anywhere;
+}
+.team-responsibility {
+  max-width: 850px;
+}
+.team-members {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px 48px;
+}
+.team-member {
+  min-width: 0;
+}
+.team-member:only-child {
+  grid-column: 1 / -1;
+  max-width: 850px;
+}
+.team-member h4 {
+  font-size: 20px;
+  line-height: 1.5;
+  font-weight: 600;
+  margin: 0 0 8px;
+}
+.team-role {
+  color: var(--ink);
+}
+.team-member p:last-child {
+  margin-bottom: 0;
+}
+@media (max-width: 760px) {
+  .team-members {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
 .prose h2 {
   font-size: 39px;
   margin-top: 55px;
