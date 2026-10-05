@@ -6,15 +6,11 @@ export default function Contacts() {
   return (
     <>
       <PageIntro
-        title="Связь с фондом."
+        title="Контакты"
         description="Благотворительный фонд «Никогда не поздно»."
       />
       <section className="container section contact-section">
-        <h2>
-          Контакты пока
-          <br />
-          <em>не опубликованы.</em>
-        </h2>
+        <h2>Контакты пока не опубликованы</h2>
         <div>
           <p>
             Телефон, электронная почта и адрес для обращений появятся здесь

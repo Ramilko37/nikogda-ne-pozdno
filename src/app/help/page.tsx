@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { PageIntro, StatusNote } from "@/components/ui";
-import { DonationForm } from "@/components/donation-form";
+import Link from "next/link";
 export const metadata: Metadata = { title: "Поддержать фонд" };
 const ways = [
   [
@@ -24,16 +24,15 @@ export default function Help() {
   return (
     <>
       <PageIntro
-        title="Добрые перемены начинаются с участия."
-        description="Деньгами, временем, профессиональными знаниями или необходимыми вещами — в проекте программы предусмотрены разные способы поддержать людей."
+        title="Как поддержать фонд"
+        description="В проекте программы предусмотрены пожертвования, волонтёрство, профессиональная помощь и партнёрство. Ниже — планируемые способы участия и их текущий статус."
       />
       <section className="container help-layout section">
         <div>
           <StatusNote />
           <div className="help-ways">
-            {ways.map(([title, body], i) => (
+            {ways.map(([title, body]) => (
               <article key={title}>
-                <span className="small-label">0{i + 1}</span>
                 <h3>{title}</h3>
                 <p>{body}</p>
               </article>
@@ -44,7 +43,21 @@ export default function Help() {
             волонтёров и оформление партнёрства на сайте пока недоступны.
           </p>
         </div>
-        <DonationForm />
+        <aside className="support-status" aria-labelledby="donation-status">
+          <h2 id="donation-status">Пожертвования через сайт</h2>
+          <p>
+            Платёжный сервис пока не подключён. Сделать пожертвование через сайт
+            сейчас нельзя.
+          </p>
+          <p>
+            В проекте предусмотрены разовые и регулярные пожертвования. Целевые
+            поступления планируется учитывать отдельно и использовать только на
+            указанную цель.
+          </p>
+          <Link href="/reports" className="text-link">
+            Программа и план расходов
+          </Link>
+        </aside>
       </section>
     </>
   );

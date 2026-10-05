@@ -29,8 +29,8 @@ export default async function Program({
         <Link className="breadcrumb" href="/programs">
           Все программы
         </Link>
-        <p className="section-label">{p.category}</p>
-        <h1>{p.name}</h1>
+        <h1>{p.short}</h1>
+        <p className="program-category">{p.category}</p>
         <p className="intro-description">{p.summary}</p>
         <StatusNote />
       </section>
@@ -56,7 +56,7 @@ export default async function Program({
             <br />1 января — 31 декабря 2027
           </p>
           <Link href="/help" className="button">
-            Поддержать фонд
+            Как поддержать фонд
           </Link>
         </aside>
         <div className="prose">

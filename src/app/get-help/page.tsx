@@ -7,18 +7,18 @@ export default function GetHelp() {
   return (
     <>
       <PageIntro
-        title="Первый шаг — узнать о поддержке."
+        title="Получить помощь"
         description="Здесь собраны условия и порядок обращения, предусмотренные проектом программы фонда на 2027 год."
       />
       <section className="container section article-layout">
         <div>
           <StatusNote />
           <div className="availability-note">
-            <h3>Приём обращений пока недоступен</h3>
+            <h3>Заявка через сайт пока недоступна</h3>
             <p>
-              Каналы связи и дата начала приёма пока не опубликованы. На этой
-              странице можно познакомиться с планируемыми направлениями
-              поддержки.
+              Контакты и дата начала приёма заявок через сайт пока не
+              опубликованы. На этой странице можно познакомиться с планируемыми
+              направлениями поддержки.
             </p>
           </div>
         </div>
@@ -27,7 +27,7 @@ export default function GetHelp() {
           {programs.map((p) => (
             <p key={p.id}>
               <Link className="text-link" href={"/programs/" + p.slug}>
-                {p.name}
+                {p.short}
               </Link>
               <br />
               {p.audience}

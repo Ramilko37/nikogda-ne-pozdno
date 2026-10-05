@@ -1,7 +1,12 @@
 import Link from "next/link";
 import { EarthExplorer } from "@/components/earth-explorer";
-import { ProgramRows, StatusNote, SupportBand } from "@/components/ui";
-import { helpSteps } from "@/lib/content";
+import {
+  DocumentLink,
+  HelpSteps,
+  ProgramRows,
+  StatusNote,
+  SupportBand,
+} from "@/components/ui";
 export default function Home() {
   return (
     <>
@@ -11,9 +16,7 @@ export default function Home() {
             <h1>
               Никогда
               <br />
-              не поздно
-              <br />
-              <em>изменить жизнь.</em>
+              не поздно <em>изменить жизнь.</em>
             </h1>
             <p className="hero-description">
               Помощь в трудной ситуации, поддержка на пути к самостоятельности и
@@ -21,45 +24,35 @@ export default function Home() {
             </p>
             <div className="hero-actions">
               <Link href="/help" className="button">
-                Поддержать фонд
+                Как поддержать фонд
               </Link>
               <Link href="/get-help" className="text-link">
-                Получить помощь
+                Условия помощи
               </Link>
             </div>
-            <div className="hero-status">
-              <span />
-              Проект программы на 2027 год
-            </div>
+            <p className="hero-status">Проект программы на 2027 год</p>
           </div>
           <EarthExplorer />
         </div>
       </section>
       <section className="section about-section container">
         <div>
-          <p className="section-label">О фонде</p>
-          <h2>
-            У каждого человека
-            <br />
-            должна быть
-            <br />
-            <em>точка опоры.</em>
-          </h2>
-        </div>
-        <div className="about-copy">
-          <p className="large-copy">
-            Обстоятельства могут говорить «поздно». Мы хотим, чтобы у человека
-            оставалась возможность получить помощь и начать заново.
-          </p>
+          <h2>О фонде</h2>
           <p>
             «Никогда не поздно» — благотворительный фонд, зарегистрированный в
-            2026 году. Проект первого полного года работы объединяет адресную
-            помощь, реабилитацию и трудоустройство, наставничество и заботу о
-            здоровье.
+            2026 году. Сейчас подготовлен проект программы на первый полный год
+            работы.
           </p>
           <Link href="/about" className="text-link">
-            Познакомиться с фондом
+            Подробнее о фонде
           </Link>
+        </div>
+        <div className="about-copy">
+          <p>
+            Фонд планирует помогать семьям и одиноким пожилым людям, людям с
+            инвалидностью и безработным, детям-сиротам, выпускникам интернатов и
+            замещающим семьям.
+          </p>
           <div className="governance-summary">
             <p>
               Текущей работой фонда руководит генеральный директор. Совет фонда
@@ -74,23 +67,7 @@ export default function Home() {
       </section>
       <section className="programs-section section">
         <div className="container">
-          <div className="section-heading">
-            <div>
-              <p className="section-label">Четыре направления заботы</p>
-              <h2>
-                Поддержка для
-                <br />
-                <em>нового начала.</em>
-              </h2>
-            </div>
-            <p>
-              Разные жизненные ситуации.
-              <br />
-              Одна цель — помочь человеку
-              <br />
-              обрести опору.
-            </p>
-          </div>
+          <h2>Программы фонда</h2>
           <StatusNote />
           <ProgramRows />
           <p className="section-footnote">
@@ -99,60 +76,33 @@ export default function Home() {
           </p>
         </div>
       </section>
-      <section className="section container">
-        <div className="section-heading">
-          <div>
-            <p className="section-label">Как устроена помощь</p>
-            <h2>
-              С вниманием
-              <br />
-              <em>к каждой ситуации.</em>
-            </h2>
-          </div>
-          <p>
-            В проекте программы предусмотрен
-            <br />
-            понятный порядок рассмотрения
-            <br />
-            обращений.
-          </p>
-        </div>
-        <div className="steps">
-          {helpSteps.map((s, i) => (
-            <article key={s.title}>
-              <span className="step-number">0{i + 1}</span>
-              <h3>{s.title}</h3>
-              <p>{s.text}</p>
-            </article>
-          ))}
-        </div>
+      <section className="section process-section container">
+        <h2>Как будет устроена помощь</h2>
+        <p className="section-description">
+          В проекте предусмотрены три этапа: от заявления до документального
+          подтверждения помощи.
+        </p>
+        <HelpSteps />
+        <p className="availability-note">
+          Через сайт пока нельзя отправить заявку на помощь.
+        </p>
         <Link href="/get-help" className="text-link">
-          Условия получения помощи
+          Условия помощи
         </Link>
       </section>
       <section className="trust-section">
         <div className="container trust-content">
           <div>
-            <p className="section-label">Открытость с самого начала</p>
-            <h2>
-              Доверие начинается
-              <br />
-              <em>с понятных решений.</em>
-            </h2>
-          </div>
-          <div>
+            <h2>Документы и отчётность</h2>
             <p>
-              В проекте предусмотрены раздельный учёт целевых пожертвований,
-              документальное подтверждение помощи и публичный годовой отчёт.
-            </p>
-            <p>
-              Сейчас можно ознакомиться с проектом программы на 2027 год. Итоги
-              работы в нём не заявлены.
+              В проекте программы описаны мероприятия, план расходов и порядок
+              контроля. Годовые отчёты пока не опубликованы.
             </p>
             <Link href="/reports" className="text-link">
-              Документы и отчётность
+              Все документы и порядок отчётности
             </Link>
           </div>
+          <DocumentLink />
         </div>
       </section>
       <SupportBand />

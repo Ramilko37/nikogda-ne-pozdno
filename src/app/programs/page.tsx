@@ -1,17 +1,12 @@
 import type { Metadata } from "next";
-import {
-  PageIntro,
-  ProgramRows,
-  StatusNote,
-  SupportBand,
-} from "@/components/ui";
+import { PageIntro, ProgramRows, StatusNote } from "@/components/ui";
 export const metadata: Metadata = { title: "Программы фонда" };
 export default function Programs() {
   return (
     <>
       <PageIntro
-        title="Четыре способа быть рядом."
-        description="Адресная помощь, новое начало, самостоятельность и здоровье. Четыре подпрограммы комплексной благотворительной программы «Никогда не поздно» на 2027 год."
+        title="Программы фонда"
+        description="Четыре направления: адресная помощь, реабилитация и трудоустройство, наставничество, физическое и психологическое здоровье."
       />
       <section className="container catalog-section">
         <StatusNote />
@@ -22,7 +17,6 @@ export default function Programs() {
           программы.
         </p>
       </section>
-      <SupportBand />
     </>
   );
 }

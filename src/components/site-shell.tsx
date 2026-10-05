@@ -1,17 +1,18 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Menu, X } from "lucide-react";
 const links = [
   ["/about", "О фонде"],
   ["/programs", "Программы"],
-  ["/get-help", "Получить помощь"],
+  ["/get-help", "Условия помощи"],
   ["/reports", "Документы"],
 ];
 export function Header() {
   const [open, setOpen] = useState(false);
   const path = usePathname();
+  const menuButton = useRef<HTMLButtonElement>(null);
   useEffect(() => setOpen(false), [path]);
   return (
     <header className="site-header">
@@ -45,9 +46,10 @@ export function Header() {
           ))}
         </nav>
         <Link href="/help" className="button header-help">
-          Помочь
+          Поддержка
         </Link>
         <button
+          ref={menuButton}
           className="mobile-menu icon-button"
           aria-label={open ? "Закрыть меню" : "Открыть меню"}
           aria-expanded={open}
@@ -63,7 +65,10 @@ export function Header() {
           className="mobile-nav"
           aria-label="Мобильная навигация"
           onKeyDown={(e) => {
-            if (e.key === "Escape") setOpen(false);
+            if (e.key === "Escape") {
+              setOpen(false);
+              menuButton.current?.focus();
+            }
           }}
         >
           {links.map(([href, label]) => (
@@ -85,14 +90,11 @@ export function Footer() {
           <Link href="/" className="footer-brand">
             Никогда не поздно
           </Link>
-          <p>
-            Помощь, новое начало и здоровье
-            <br />в любом возрасте и положении.
-          </p>
+          <p>Адресная помощь, реабилитация, наставничество и здоровье.</p>
           <nav aria-label="Навигация в подвале">
             <Link href="/contacts">Контакты</Link>
             <Link href="/reports">Документы и отчёты</Link>
-            <Link href="/help">Поддержать фонд</Link>
+            <Link href="/help">Как поддержать фонд</Link>
           </nav>
         </div>
         <div className="footer-bottom">

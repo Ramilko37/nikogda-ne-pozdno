@@ -109,7 +109,6 @@ export function EarthExplorer() {
         })}
       </div>
       <div className="earth-caption">
-        <p>Четыре программы — четыре возможности помочь</p>
         <button className="motion-control" onClick={() => setPaused((p) => !p)} aria-pressed={paused || reduced} disabled={reduced || !enabled || failed}>
           {paused || reduced || !enabled || failed ? <Play size={14} /> : <Pause size={14} />}
           <span>{reduced || !enabled || failed ? "Без анимации" : paused ? "Включить анимацию" : "Остановить анимацию"}</span>
@@ -120,8 +119,7 @@ export function EarthExplorer() {
       </div>
       <div className="program-detail-slot" id="program-detail" aria-live="polite" aria-atomic="true">
         <div className="program-detail-intro" aria-hidden={!!selected} style={{ visibility: selected ? "hidden" : "visible" }}>
-          <span className="detail-spark" aria-hidden="true">✦</span>
-          <div><p>Большие перемены начинаются<br />с небольшого участия.</p><span>Выберите огонёк и познакомьтесь с программой.</span></div>
+          <p>Выберите огонёк или название программы, чтобы узнать, какая помощь предусмотрена.</p>
         </div>
         {programs.map((p) => <div key={p.id} className="selected-program" id={selected === p.id ? "selected-program" : undefined} aria-hidden={selected !== p.id} inert={selected !== p.id} style={{ visibility: selected === p.id ? "visible" : "hidden" }}>
           <button className="close-card" aria-label="Закрыть карточку программы" onClick={close}><X size={18} /></button>

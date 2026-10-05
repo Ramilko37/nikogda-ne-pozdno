@@ -1,28 +1,16 @@
 import type { Metadata } from "next";
-import { FileText, Download } from "lucide-react";
-import { PageIntro } from "@/components/ui";
+import { DocumentLink, PageIntro } from "@/components/ui";
 export const metadata: Metadata = { title: "Документы и отчёты" };
 export default function Reports() {
   return (
     <>
       <PageIntro
-        title="Открыто о планах и решениях."
+        title="Документы и отчётность"
         description="Документы помогают понять, кому адресована помощь, как планируются расходы и какие механизмы контроля предусмотрены."
       />
       <section className="container section reports-content">
         <h2>Программа фонда</h2>
-        <a
-          className="document-link"
-          href="/documents/program-2027-draft.docx"
-          download
-        >
-          <FileText size={32} strokeWidth={1.3} />
-          <div>
-            <h3>Благотворительная программа на 2027 год</h3>
-            <p>Проект от 28 сентября 2026 года · DOCX</p>
-          </div>
-          <Download size={20} />
-        </a>
+        <DocumentLink />
         <p>
           Документ вносится на утверждение Совета фонда. Указанные бюджеты,
           показатели и сроки являются плановыми ориентирами. Это не отчёт о

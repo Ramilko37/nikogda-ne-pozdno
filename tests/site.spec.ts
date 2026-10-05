@@ -33,7 +33,9 @@ test("every program opens directly with project status and planned budget", asyn
   for (const [slug, name] of programs) {
     const response = await page.goto("/programs/" + slug);
     expect(response?.status()).toBe(200);
-    await expect(page.locator("h1")).toHaveText("Никогда не поздно " + name);
+    await expect(page.locator("h1")).toHaveText(
+      name[0].toUpperCase() + name.slice(1),
+    );
     await expect(
       page.getByText("Это план расходов, не собранная сумма.", {
         exact: false,
@@ -96,20 +98,68 @@ test("no WebGL retains functional selection", async ({ page }) => {
     "Никогда не поздно быть здоровым",
   );
 });
-test("donation remains explicitly demo and never sends a payment", async ({
+test("support describes unavailable payments without a demo checkout", async ({
   page,
 }) => {
+  const writes: string[] = [];
+  page.on("request", (request) => {
+    if (request.method() !== "GET" && request.method() !== "HEAD")
+      writes.push(request.url());
+  });
   await page.goto("/help");
-  await page.getByRole("button", { name: "Разово", exact: true }).click();
-  await page.getByLabel("Другая сумма, ₽").fill("750");
-  await page
-    .getByRole("button", { name: "Проверить выбранную сумму · демо" })
-    .click();
-  await expect(page.getByRole("status")).toContainText("750 ₽ разово");
-  await expect(page.getByRole("status")).toContainText(
-    "Пожертвование не оформлено",
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+    "Как поддержать фонд",
   );
-  await expect(page.locator("input")).toHaveCount(1);
+  await expect(
+    page.getByText("Сделать пожертвование через сайт сейчас нельзя.", {
+      exact: false,
+    }),
+  ).toBeVisible();
+  await expect(page.locator("form, input")).toHaveCount(0);
+  await page.getByRole("link", { name: "Программа и план расходов" }).click();
+  await expect(page).toHaveURL(/\/reports$/);
+  await expect(page.locator("a[download]")).toHaveAttribute(
+    "href",
+    "/documents/program-2027-draft.docx",
+  );
+  expect(writes).toEqual([]);
+});
+test("team anchor, confirmed names and mobile menu focus", async ({ page }) => {
+  await page.goto("/about#team");
+  const heading = page.getByRole("heading", {
+    name: "Команда и управление",
+    exact: true,
+  });
+  await expect(heading).toBeInViewport();
+  expect((await heading.boundingBox())!.y).toBeGreaterThanOrEqual(0);
+  await expect(page.locator(".team-member h4")).toHaveText([
+    "Шалит Павел Вадимович",
+    "Ларионова Анастасия Сергеевна",
+    "Рыжков Михаил Ильич",
+    "Галямдин Рамиль Дамирович",
+    "Мерзликин Илья Ильич",
+    "Пикалев Дмитрий Сергеевич",
+  ]);
+  for (const name of await page.locator(".team-member h4").all()) {
+    expect(await name.evaluate((e) => e.scrollWidth <= e.clientWidth)).toBe(
+      true,
+    );
+  }
+  const menu = page.getByRole("button", { name: "Открыть меню" });
+  if (await menu.isVisible()) {
+    await menu.click();
+    await page.locator("#mobile-navigation a").first().focus();
+    await page.keyboard.press("Escape");
+    await expect(page.locator("#mobile-navigation")).toHaveCount(0);
+    await expect(menu).toBeFocused();
+    await menu.click();
+    await page
+      .locator("#mobile-navigation")
+      .getByRole("link", { name: "Условия помощи" })
+      .click();
+    await expect(page).toHaveURL(/\/get-help$/);
+    await expect(page.locator("#mobile-navigation")).toHaveCount(0);
+  }
 });
 test("responsive layout and 44px program targets", async ({ page }) => {
   await page.goto("/");
