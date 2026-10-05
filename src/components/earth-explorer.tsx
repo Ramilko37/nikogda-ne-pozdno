@@ -79,6 +79,7 @@ export function EarthExplorer() {
   }, [selected, close]);
   const onReady = useCallback(() => setReady(true), []);
   const onFailure = useCallback(() => { setFailed(true); setReady(false); }, []);
+  const motionUnavailable = reduced || !enabled || failed;
   const moving = enabled && !failed && !capture && !paused && !reduced && visible && inView && !hovered && !focused && !selected;
   const choose = (id: string, el: HTMLElement) => { lastTrigger.current = el; setSelected(id); setHovered(null); };
   const interaction = (id: string) => ({
@@ -109,8 +110,8 @@ export function EarthExplorer() {
         })}
       </div>
       <div className="earth-caption">
-        <button className="motion-control" onClick={() => setPaused((p) => !p)} aria-pressed={paused || reduced} disabled={reduced || !enabled || failed}>
-          {paused || reduced || !enabled || failed ? <Play size={14} /> : <Pause size={14} />}
+        <button className="motion-control" onClick={() => setPaused((p) => !p)} aria-pressed={motionUnavailable ? undefined : paused} disabled={motionUnavailable}>
+          {!motionUnavailable && paused ? <Play size={14} aria-hidden="true" /> : <Pause size={14} aria-hidden="true" />}
           <span>{reduced || !enabled || failed ? "Без анимации" : paused ? "Включить анимацию" : "Остановить анимацию"}</span>
         </button>
       </div>

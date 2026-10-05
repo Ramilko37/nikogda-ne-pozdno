@@ -92,7 +92,7 @@ export function SupportBand() {
             недоступно.
           </p>
         </div>
-        <Link className="button" href="/help">
+        <Link className="button button-support" href="/help">
           Способы участия
         </Link>
       </div>

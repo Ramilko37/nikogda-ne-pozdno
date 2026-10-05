@@ -60,6 +60,8 @@ test('reduced motion renders WebGL once and tab visibility pauses movement',asyn
   await page.goto('/'); await page.locator('.earth-stage').scrollIntoViewIfNeeded();
   await expect(page.locator('.earth-explorer')).toHaveAttribute('data-renderer','webgl');
   await expect(page.getByRole('button',{name:'Без анимации'})).toBeDisabled();
+  await expect(page.getByRole('button',{name:'Без анимации'})).not.toHaveAttribute('aria-pressed');
+  await expect(page.getByRole('button',{name:'Без анимации'}).locator('.lucide-pause')).toHaveCount(1);
   await expect(page.locator('.earth-explorer')).toHaveAttribute('data-moving','false');
   await page.emulateMedia({reducedMotion:'no-preference'});
   await expect(page.locator('.earth-explorer')).toHaveAttribute('data-moving','true');
@@ -116,4 +118,28 @@ test('layout, label collisions, HTML accessibility and normal console health',as
     await page.getByRole('button',{name:programs[2].name,exact:true}).click();
     await page.locator('.hero').screenshot({path:`${folder}/${testInfo.project.name}-selected.png`});
   }
+});
+
+test.describe('short desktop composition', () => {
+  test.skip(({isMobile}) => isMobile, 'Desktop composition');
+  test('keeps every star clickable while a card is open', async ({page}) => {
+  await page.emulateMedia({reducedMotion:'reduce'});
+  for (const width of [1101, 1366, 1440, 1920, 2560]) {
+    await page.setViewportSize({width, height:768});
+    await page.goto('/?static');
+    const baseline = await page.locator('.hero').boundingBox();
+    for (const program of programs) {
+      const trigger = page.getByRole('button', {name:program.name, exact:true});
+      const target = await trigger.boundingBox();
+      expect(target!.y).toBeGreaterThanOrEqual(baseline!.y);
+      expect(target!.y + target!.height).toBeLessThanOrEqual(baseline!.y + baseline!.height);
+      await trigger.click();
+      await expect(page.locator('#selected-program h3')).toHaveText(program.name);
+    }
+    expect((await page.locator('.hero').boundingBox())!.height).toBe(baseline!.height);
+    await page.keyboard.press('Escape');
+    await expect(page.getByRole('button', {name:programs.at(-1)!.name, exact:true})).toBeFocused();
+  }
+});
+
 });

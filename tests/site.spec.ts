@@ -131,7 +131,7 @@ test("team anchor, confirmed names and mobile menu focus", async ({ page }) => {
     exact: true,
   });
   await expect(heading).toBeInViewport();
-  expect((await heading.boundingBox())!.y).toBeGreaterThanOrEqual(0);
+  expect((await heading.boundingBox())!.y).toBeGreaterThanOrEqual((await page.locator(".site-header").boundingBox())!.height);
   await expect(page.locator(".team-member h4")).toHaveText([
     "Шалит Павел Вадимович",
     "Ларионова Анастасия Сергеевна",
@@ -173,4 +173,17 @@ test("responsive layout and 44px program targets", async ({ page }) => {
     expect(bounds!.height).toBeGreaterThanOrEqual(44);
   }
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+});
+
+test("social metadata and local image are present while launch indexing stays disabled", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
+  await expect(page.locator('meta[name="theme-color"]')).toHaveAttribute("content", "#fafaf7");
+  await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute("content", "summary_large_image");
+  const image = await page.locator('meta[property="og:image"]').getAttribute("content");
+  expect(image).toBe("https://nikogda-ne-pozdno.vercel.app/assets/social-cover.png");
+  const response = await page.request.get("/assets/social-cover.png");
+  expect(response.status()).toBe(200);
+  expect(response.headers()["content-type"]).toContain("image/png");
+  expect((await page.request.get("/icon.svg")).status()).toBe(200);
 });

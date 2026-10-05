@@ -23,7 +23,7 @@ export default function Home() {
               забота о здоровье — в любом возрасте.
             </p>
             <div className="hero-actions">
-              <Link href="/help" className="button">
+              <Link href="/help" className="button button-support">
                 Как поддержать фонд
               </Link>
               <Link href="/get-help" className="text-link">

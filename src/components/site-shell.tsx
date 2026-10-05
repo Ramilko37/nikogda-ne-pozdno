@@ -45,7 +45,7 @@ export function Header() {
             </Link>
           ))}
         </nav>
-        <Link href="/help" className="button header-help">
+        <Link href="/help" className="button button-support header-help">
           Поддержка
         </Link>
         <button
