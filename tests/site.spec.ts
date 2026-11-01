@@ -10,6 +10,8 @@ test("four program lights, keyboard selection, synchronization and escape", asyn
 }) => {
   await page.goto("/");
   await expect(page.locator(".orb-button")).toHaveCount(4);
+  await expect(page.getByRole("button", { name: /Остановить анимацию|Включить анимацию|Без анимации/ })).toHaveCount(0);
+  await expect(page.getByText("Огоньки обозначают программы", { exact: false })).toHaveCount(0);
   for (const [, name] of programs) {
     const orb = page.getByRole("button", {
       name: "Никогда не поздно " + name,
@@ -55,9 +57,7 @@ test("reduced motion and fallback stay usable", async ({ page }) => {
     "data-moving",
     "false",
   );
-  await expect(
-    page.getByRole("button", { name: "Без анимации" }),
-  ).toBeDisabled();
+  await expect(page.locator(".motion-control, .geography-caption")).toHaveCount(0);
   await expect(page.locator(".earth-explorer")).toHaveAttribute(
     "data-renderer",
     "static",
@@ -186,4 +186,11 @@ test("social metadata and local image are present while launch indexing stays di
   expect(response.status()).toBe(200);
   expect(response.headers()["content-type"]).toContain("image/png");
   expect((await page.request.get("/icon.svg")).status()).toBe(200);
+});
+
+test("long program heading fits a 320px viewport", async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 800 });
+  await page.goto("/programs/stat-samostoyatelnym");
+  await page.evaluate(() => document.fonts.ready);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });

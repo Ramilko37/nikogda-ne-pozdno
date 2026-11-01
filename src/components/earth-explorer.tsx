@@ -2,7 +2,7 @@
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { Component, useState, useEffect, useRef, useCallback, type ReactNode, type CSSProperties } from "react";
-import { Pause, Play, X } from "lucide-react";
+import { X } from "lucide-react";
 import { programs } from "@/lib/content";
 import { projectPoint, starPoint } from "@/lib/earth-model";
 const Scene = dynamic(() => import("./earth-scene"), { ssr: false, loading: () => null });
@@ -16,7 +16,7 @@ export function EarthExplorer() {
   const [selected, setSelected] = useState<string | null>(null);
   const [hovered, setHovered] = useState<string | null>(null);
   const [focused, setFocused] = useState<string | null>(null);
-  const [paused, setPaused] = useState(false), [reduced, setReduced] = useState(true);
+  const [reduced, setReduced] = useState(true);
   const [visible, setVisible] = useState(true), [inView, setInView] = useState(false);
   const [enabled, setEnabled] = useState(false), [failed, setFailed] = useState(false);
   const [ready, setReady] = useState(false), [lowPower, setLowPower] = useState(false);
@@ -79,8 +79,7 @@ export function EarthExplorer() {
   }, [selected, close]);
   const onReady = useCallback(() => setReady(true), []);
   const onFailure = useCallback(() => { setFailed(true); setReady(false); }, []);
-  const motionUnavailable = reduced || !enabled || failed;
-  const moving = enabled && !failed && !capture && !paused && !reduced && visible && inView && !hovered && !focused && !selected;
+  const moving = enabled && !failed && !capture && !reduced && visible && inView && !hovered && !focused && !selected;
   const choose = (id: string, el: HTMLElement) => { lastTrigger.current = el; setSelected(id); setHovered(null); };
   const interaction = (id: string) => ({
     onMouseEnter: () => setHovered(id), onMouseLeave: () => setHovered(null),
@@ -109,12 +108,6 @@ export function EarthExplorer() {
           </div>;
         })}
       </div>
-      <div className="earth-caption">
-        <button className="motion-control" onClick={() => setPaused((p) => !p)} aria-pressed={motionUnavailable ? undefined : paused} disabled={motionUnavailable}>
-          {!motionUnavailable && paused ? <Play size={14} aria-hidden="true" /> : <Pause size={14} aria-hidden="true" />}
-          <span>{reduced || !enabled || failed ? "Без анимации" : paused ? "Включить анимацию" : "Остановить анимацию"}</span>
-        </button>
-      </div>
       <div className="program-selector" role="group" aria-label="Выберите программу">
         {programs.map((p, i) => <button key={p.id} aria-pressed={selected === p.id} aria-controls="program-detail" {...interaction(p.id)} onClick={(e) => choose(p.id, e.currentTarget)}><span aria-hidden="true">0{i+1}</span>{p.short}</button>)}
       </div>
@@ -127,7 +120,6 @@ export function EarthExplorer() {
           <h3>{p.name}</h3><p>{p.summary}</p><Link href={`/programs/${p.slug}`} className="text-link">О программе</Link>
         </div>)}
       </div>
-      <p className="geography-caption">Огоньки обозначают программы, а не места оказания помощи. <a href="/assets/earth/CREDITS.txt">Источники изображения</a></p>
     </div>
   );
 }

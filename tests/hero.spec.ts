@@ -32,20 +32,20 @@ test('WebGL projection stays stable while paused, motion resumes, hover/focus pa
   await page.goto('/');
   await page.locator('.earth-stage').scrollIntoViewIfNeeded();
   await expect(page.locator('.earth-explorer')).toHaveAttribute('data-renderer','webgl');
-  const control=page.getByRole('button',{name:'Остановить анимацию'});
-  await control.click();
+  const star=page.getByRole('button',{name:programs[0].name,exact:true});
+  await star.focus();
+  await expect(page.locator('.earth-explorer')).toHaveAttribute('data-moving','false');
   await page.waitForTimeout(250);
   const before=await page.locator('.orb-position').evaluateAll(els=>els.map(e=>e.getAttribute('style')));
   const frames=await page.evaluate(()=>(window as unknown as {frameCount:number}).frameCount);
   await page.waitForTimeout(350);
   expect(await page.locator('.orb-position').evaluateAll(els=>els.map(e=>e.getAttribute('style')))).toEqual(before);
   expect(await page.evaluate(()=>(window as unknown as {frameCount:number}).frameCount)).toBeLessThanOrEqual(frames+1);
-  await page.getByRole('button',{name:'Включить анимацию'}).click();
+  await page.locator('.hero-actions a').first().focus();
   await expect(page.locator('.earth-explorer')).toHaveAttribute('data-moving','true');
-  const star=page.getByRole('button',{name:programs[0].name,exact:true});
   await star.focus();
   await expect(page.locator('.earth-explorer')).toHaveAttribute('data-moving','false');
-  await page.getByRole('button',{name:'Остановить анимацию'}).focus();
+  await page.locator('.hero-actions a').first().focus();
   const target = await star.boundingBox();
   await page.mouse.move(target!.x + target!.width / 2, target!.y + target!.height / 2);
   await expect(page.locator('.earth-explorer')).toHaveAttribute('data-moving','false');
@@ -59,9 +59,6 @@ test('reduced motion renders WebGL once and tab visibility pauses movement',asyn
   await page.emulateMedia({reducedMotion:'reduce'});
   await page.goto('/'); await page.locator('.earth-stage').scrollIntoViewIfNeeded();
   await expect(page.locator('.earth-explorer')).toHaveAttribute('data-renderer','webgl');
-  await expect(page.getByRole('button',{name:'Без анимации'})).toBeDisabled();
-  await expect(page.getByRole('button',{name:'Без анимации'})).not.toHaveAttribute('aria-pressed');
-  await expect(page.getByRole('button',{name:'Без анимации'}).locator('.lucide-pause')).toHaveCount(1);
   await expect(page.locator('.earth-explorer')).toHaveAttribute('data-moving','false');
   await page.emulateMedia({reducedMotion:'no-preference'});
   await expect(page.locator('.earth-explorer')).toHaveAttribute('data-moving','true');
@@ -93,7 +90,7 @@ test('layout, label collisions, HTML accessibility and normal console health',as
   page.on('console',m=>{if(m.type()==='error')errors.push(m.text())});
   await page.goto('/');await page.locator('.earth-stage').scrollIntoViewIfNeeded();
   await expect(page.locator('.earth-explorer')).toHaveAttribute('data-renderer','webgl');
-  await page.getByRole('button',{name:'Остановить анимацию'}).click();
+  await page.getByRole('button',{name:programs[0].name,exact:true}).focus();
   const result=await page.evaluate(()=>{
     const rects=[...document.querySelectorAll('.orb-label')].filter(el=>getComputedStyle(el).display!=='none').map(el=>el.getBoundingClientRect());
     return {
