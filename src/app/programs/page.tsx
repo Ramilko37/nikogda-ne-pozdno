@@ -10,7 +10,7 @@ export default function Programs() {
   return (
     <>
       <PageIntro
-        title="Четыре способа быть рядом."
+        title="Программы фонда"
         description="Адресная помощь, новое начало, самостоятельность и здоровье. Четыре подпрограммы комплексной благотворительной программы «Никогда не поздно» на 2027 год."
       />
       <section className="container catalog-section">

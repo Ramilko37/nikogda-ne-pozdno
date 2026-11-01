@@ -8,3 +8,5 @@ test-results/
 playwright-report/
 
 .earth-cache/
+
+.taste-skill/

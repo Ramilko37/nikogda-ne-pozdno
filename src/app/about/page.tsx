@@ -8,7 +8,7 @@ export default function About() {
   return (
     <>
       <PageIntro
-        title="Никогда не поздно быть рядом."
+        title="О фонде"
         description="Благотворительный фонд «Никогда не поздно» зарегистрирован в 2026 году. 2027-й в проекте программы обозначен как первый полный год работы."
       />
       <section className="container section article-layout">
@@ -39,7 +39,7 @@ export default function About() {
         </div>
       </section>
       <TeamSection />
-      <section className="container section article-layout" aria-labelledby="about-documents">
+      <section className="container section article-layout compact-section" aria-labelledby="about-documents">
         <h2 id="about-documents">Документы</h2>
         <div className="prose">
           <p>
@@ -49,7 +49,7 @@ export default function About() {
           <Link href="/reports" className="text-link">Документы и отчёты</Link>
         </div>
       </section>
-      <section className="container section article-layout" aria-labelledby="about-contacts">
+      <section className="container section article-layout compact-section" aria-labelledby="about-contacts">
         <h2 id="about-contacts">Контакты</h2>
         <div className="prose">
           <p>

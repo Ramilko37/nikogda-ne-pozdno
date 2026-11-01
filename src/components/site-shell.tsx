@@ -25,7 +25,6 @@ export function Header() {
             никогда
             <br />
             не поздно
-            <span className="brand-light" />
           </span>
           <span className="brand-caption">
             благотворительный

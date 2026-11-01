@@ -7,12 +7,18 @@ export function DonationForm() {
   return (
     <form
       className="donation-form"
+      id="donation"
+      tabIndex={-1}
       onSubmit={(e) => {
         e.preventDefault();
         setNotice(true);
       }}
     >
       <h2>Поддержать деньгами</h2>
+      <p className="demo-note">
+        Демонстрационный режим. Платежи пока недоступны. Деньги не списываются,
+        данные карты не запрашиваются.
+      </p>
       <p>
         Даже небольшая регулярная помощь позволяет планировать поддержку людей.
       </p>
@@ -70,10 +76,6 @@ export function DonationForm() {
       <button className="button" type="submit">
         Проверить выбранную сумму · демо
       </button>
-      <p className="demo-note">
-        Демонстрационный режим. Платёжный сервис пока не подключён. Деньги не
-        списываются, данные карты не запрашиваются.
-      </p>
       {notice && (
         <p className="form-notice" role="status">
           Вы выбрали {new Intl.NumberFormat("ru").format(Number(amount))} ₽{" "}

@@ -34,31 +34,7 @@ export default async function Program({
         <p className="intro-description">{p.summary}</p>
         <StatusNote />
       </section>
-      <section className="container article-layout section">
-        <aside className="program-aside">
-          <p className="section-label">План на 2027 год</p>
-          <p className="budget">{money(p.budget)}</p>
-          <p>
-            Проект бюджета подпрограммы.
-            <br />
-            Это план расходов, не собранная сумма.
-          </p>
-          <hr />
-          <p>
-            <strong>География по проекту</strong>
-            <br />
-            Москва и Московская область.
-            <br />
-            Требует подтверждения.
-          </p>
-          <p>
-            <strong>Период по проекту</strong>
-            <br />1 января — 31 декабря 2027
-          </p>
-          <Link href="/help" className="button">
-            Поддержать фонд
-          </Link>
-        </aside>
+      <section className="container reading-content section">
         <div className="prose">
           <h2>Кому предназначена</h2>
           <p>{p.audience}</p>
@@ -82,6 +58,37 @@ export default async function Program({
           </p>
           <Link href="/get-help" className="text-link">
             Подробнее об условиях
+          </Link>
+        </div>
+        <div className="program-plan">
+          <h2>План на 2027 год</h2>
+          <div className="plan-grid">
+            <div>
+              <p className="budget">{money(p.budget)}</p>
+              <p>
+                Проект бюджета подпрограммы.
+                <br />
+                Это план расходов, не собранная сумма.
+              </p>
+            </div>
+            <div>
+              <p>
+                <strong>География по проекту</strong>
+                <br />
+                Москва и Московская область.
+                <br />
+                Требует подтверждения.
+              </p>
+            </div>
+            <div>
+              <p>
+                <strong>Период по проекту</strong>
+                <br />1 января — 31 декабря 2027
+              </p>
+            </div>
+          </div>
+          <Link href="/help" className="button">
+            Поддержать фонд
           </Link>
         </div>
       </section>

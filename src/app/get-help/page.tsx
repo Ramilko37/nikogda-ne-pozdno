@@ -7,12 +7,11 @@ export default function GetHelp() {
   return (
     <>
       <PageIntro
-        title="Первый шаг — узнать о поддержке."
+        title="Получить помощь"
         description="Здесь собраны условия и порядок обращения, предусмотренные проектом программы фонда на 2027 год."
       />
-      <section className="container section article-layout">
+      <section className="container section reading-content">
         <div>
-          <StatusNote />
           <div className="availability-note">
             <h3>Приём обращений пока недоступен</h3>
             <p>
@@ -21,6 +20,7 @@ export default function GetHelp() {
               поддержки.
             </p>
           </div>
+          <StatusNote />
         </div>
         <div className="prose">
           <h2>Кому адресованы программы</h2>
@@ -45,14 +45,14 @@ export default function GetHelp() {
             необходимо подтвердить до утверждения программы.
           </p>
           <h2>Порядок обращения</h2>
-          {helpSteps.map((s, i) => (
-            <div key={s.title}>
-              <h3>
-                {i + 1}. {s.title}
-              </h3>
-              <p>{s.text}</p>
-            </div>
-          ))}
+          <ol className="help-steps">
+            {helpSteps.map((s) => (
+              <li key={s.title}>
+                <h3>{s.title}</h3>
+                <p>{s.text}</p>
+              </li>
+            ))}
+          </ol>
           <p>
             Каждое решение о помощи принимается индивидуально. Срок рассмотрения
             заявлений в проекте не установлен.

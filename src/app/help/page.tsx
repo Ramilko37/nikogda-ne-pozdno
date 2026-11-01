@@ -24,12 +24,26 @@ export default function Help() {
   return (
     <>
       <PageIntro
-        title="Добрые перемены начинаются с участия."
+        title="Поддержать фонд"
         description="Деньгами, временем, профессиональными знаниями или необходимыми вещами — в проекте программы предусмотрены разные способы поддержать людей."
       />
+      <nav className="container support-nav" aria-label="Способы поддержки">
+        <a className="text-link" href="#donation">
+          Деньгами
+        </a>
+        <a className="text-link" href="#other-support">
+          Другие способы участия
+        </a>
+      </nav>
       <section className="container help-layout section">
-        <div>
+        <DonationForm />
+        <div id="other-support" tabIndex={-1}>
+          <h2>Другие способы участия</h2>
           <StatusNote />
+          <p className="availability-note">
+            Контакты для участия пока не опубликованы. Передача вещей, запись
+            волонтёров и оформление партнёрства на сайте пока недоступны.
+          </p>
           <div className="help-ways">
             {ways.map(([title, body], i) => (
               <article key={title}>
@@ -39,12 +53,7 @@ export default function Help() {
               </article>
             ))}
           </div>
-          <p className="availability-note">
-            Контакты для участия пока не опубликованы. Передача вещей, запись
-            волонтёров и оформление партнёрства на сайте пока недоступны.
-          </p>
         </div>
-        <DonationForm />
       </section>
     </>
   );

@@ -24,12 +24,8 @@ export default function Home() {
                 Поддержать фонд
               </Link>
               <Link href="/get-help" className="text-link">
-                Получить помощь
+                Попросить о помощи
               </Link>
-            </div>
-            <div className="hero-status">
-              <span />
-              Проект программы на 2027 год
             </div>
           </div>
           <EarthExplorer />
@@ -37,14 +33,7 @@ export default function Home() {
       </section>
       <section className="section about-section container">
         <div>
-          <p className="section-label">О фонде</p>
-          <h2>
-            У каждого человека
-            <br />
-            должна быть
-            <br />
-            <em>точка опоры.</em>
-          </h2>
+          <h2>У каждого должна быть точка опоры</h2>
         </div>
         <div className="about-copy">
           <p className="large-copy">
@@ -76,12 +65,7 @@ export default function Home() {
         <div className="container">
           <div className="section-heading">
             <div>
-              <p className="section-label">Четыре направления заботы</p>
-              <h2>
-                Поддержка для
-                <br />
-                <em>нового начала.</em>
-              </h2>
+              <h2>Четыре направления помощи</h2>
             </div>
             <p>
               Разные жизненные ситуации.
@@ -102,12 +86,7 @@ export default function Home() {
       <section className="section container">
         <div className="section-heading">
           <div>
-            <p className="section-label">Как устроена помощь</p>
-            <h2>
-              С вниманием
-              <br />
-              <em>к каждой ситуации.</em>
-            </h2>
+            <h2>Как устроена помощь</h2>
           </div>
           <p>
             В проекте программы предусмотрен
@@ -133,12 +112,7 @@ export default function Home() {
       <section className="trust-section">
         <div className="container trust-content">
           <div>
-            <p className="section-label">Открытость с самого начала</p>
-            <h2>
-              Доверие начинается
-              <br />
-              <em>с понятных решений.</em>
-            </h2>
+            <h2>Документы и отчётность</h2>
           </div>
           <div>
             <p>

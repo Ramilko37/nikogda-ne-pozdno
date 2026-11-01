@@ -2,7 +2,7 @@
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { Component, useState, useEffect, useRef, useCallback, type ReactNode, type CSSProperties } from "react";
-import { Pause, Play, X } from "lucide-react";
+import { X } from "lucide-react";
 import { programs } from "@/lib/content";
 import { projectPoint, starPoint } from "@/lib/earth-model";
 const Scene = dynamic(() => import("./earth-scene"), { ssr: false, loading: () => null });
@@ -16,7 +16,7 @@ export function EarthExplorer() {
   const [selected, setSelected] = useState<string | null>(null);
   const [hovered, setHovered] = useState<string | null>(null);
   const [focused, setFocused] = useState<string | null>(null);
-  const [paused, setPaused] = useState(false), [reduced, setReduced] = useState(true);
+  const [reduced, setReduced] = useState(true);
   const [visible, setVisible] = useState(true), [inView, setInView] = useState(false);
   const [enabled, setEnabled] = useState(false), [failed, setFailed] = useState(false);
   const [ready, setReady] = useState(false), [lowPower, setLowPower] = useState(false);
@@ -79,7 +79,7 @@ export function EarthExplorer() {
   }, [selected, close]);
   const onReady = useCallback(() => setReady(true), []);
   const onFailure = useCallback(() => { setFailed(true); setReady(false); }, []);
-  const moving = enabled && !failed && !capture && !paused && !reduced && visible && inView && !hovered && !focused && !selected;
+  const moving = enabled && !failed && !capture && !reduced && visible && inView && !hovered && !focused && !selected;
   const choose = (id: string, el: HTMLElement) => { lastTrigger.current = el; setSelected(id); setHovered(null); };
   const interaction = (id: string) => ({
     onMouseEnter: () => setHovered(id), onMouseLeave: () => setHovered(null),
@@ -108,27 +108,19 @@ export function EarthExplorer() {
           </div>;
         })}
       </div>
-      <div className="earth-caption">
-        <p>Четыре программы — четыре возможности помочь</p>
-        <button className="motion-control" onClick={() => setPaused((p) => !p)} aria-pressed={paused || reduced} disabled={reduced || !enabled || failed}>
-          {paused || reduced || !enabled || failed ? <Play size={14} /> : <Pause size={14} />}
-          <span>{reduced || !enabled || failed ? "Без анимации" : paused ? "Включить анимацию" : "Остановить анимацию"}</span>
-        </button>
-      </div>
       <div className="program-selector" role="group" aria-label="Выберите программу">
         {programs.map((p, i) => <button key={p.id} aria-pressed={selected === p.id} aria-controls="program-detail" {...interaction(p.id)} onClick={(e) => choose(p.id, e.currentTarget)}><span aria-hidden="true">0{i+1}</span>{p.short}</button>)}
       </div>
       <div className="program-detail-slot" id="program-detail" aria-live="polite" aria-atomic="true">
         <div className="program-detail-intro" aria-hidden={!!selected} style={{ visibility: selected ? "hidden" : "visible" }}>
           <span className="detail-spark" aria-hidden="true">✦</span>
-          <div><p>Большие перемены начинаются<br />с небольшого участия.</p><span>Выберите огонёк и познакомьтесь с программой.</span></div>
+          <p>Выберите огонёк и познакомьтесь с программой.</p>
         </div>
         {programs.map((p) => <div key={p.id} className="selected-program" id={selected === p.id ? "selected-program" : undefined} aria-hidden={selected !== p.id} inert={selected !== p.id} style={{ visibility: selected === p.id ? "visible" : "hidden" }}>
           <button className="close-card" aria-label="Закрыть карточку программы" onClick={close}><X size={18} /></button>
           <h3>{p.name}</h3><p>{p.summary}</p><Link href={`/programs/${p.slug}`} className="text-link">О программе</Link>
         </div>)}
       </div>
-      <p className="geography-caption">Огоньки обозначают программы, а не места оказания помощи. <a href="/assets/earth/CREDITS.txt">Источники изображения</a></p>
     </div>
   );
 }

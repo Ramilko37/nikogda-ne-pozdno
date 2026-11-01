@@ -6,7 +6,7 @@ export default function Reports() {
   return (
     <>
       <PageIntro
-        title="Открыто о планах и решениях."
+        title="Документы и отчёты"
         description="Документы помогают понять, кому адресована помощь, как планируются расходы и какие механизмы контроля предусмотрены."
       />
       <section className="container section reports-content">

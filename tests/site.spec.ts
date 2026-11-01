@@ -53,9 +53,7 @@ test("reduced motion and fallback stay usable", async ({ page }) => {
     "data-moving",
     "false",
   );
-  await expect(
-    page.getByRole("button", { name: "Без анимации" }),
-  ).toBeDisabled();
+  await expect(page.locator(".motion-control, .geography-caption")).toHaveCount(0);
   await expect(page.locator(".earth-explorer")).toHaveAttribute(
     "data-renderer",
     "static",
@@ -100,6 +98,10 @@ test("donation remains explicitly demo and never sends a payment", async ({
   page,
 }) => {
   await page.goto("/help");
+  const warning = page.locator(".demo-note");
+  await expect(warning).toContainText("Платежи пока недоступны");
+  expect(await warning.evaluate(el => Boolean(el.compareDocumentPosition(document.querySelector("fieldset")!) & Node.DOCUMENT_POSITION_FOLLOWING))).toBe(true);
+
   await page.getByRole("button", { name: "Разово", exact: true }).click();
   await page.getByLabel("Другая сумма, ₽").fill("750");
   await page
@@ -123,4 +125,28 @@ test("responsive layout and 44px program targets", async ({ page }) => {
     expect(bounds!.height).toBeGreaterThanOrEqual(44);
   }
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+});
+
+test("program audience precedes the plan on mobile", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  for (const [slug] of programs) {
+    await page.goto("/programs/" + slug);
+    const audience = page.getByRole("heading", { name: "Кому предназначена" });
+    const plan = page.getByRole("heading", { name: "План на 2027 год" });
+    expect(await audience.evaluate(el => Boolean(el.compareDocumentPosition(document.querySelector(".program-plan")!) & Node.DOCUMENT_POSITION_FOLLOWING))).toBe(true);
+    expect((await audience.boundingBox())!.y).toBeLessThan((await plan.boundingBox())!.y);
+  }
+});
+
+test("support anchors work with the keyboard", async ({ page }) => {
+  await page.goto("/help");
+  for (const [name, id] of [["Деньгами", "donation"], ["Другие способы участия", "other-support"]]) {
+    const link = page.getByRole("navigation", { name: "Способы поддержки" }).getByRole("link", { name, exact: true });
+    await link.focus();
+    await expect(link).toBeFocused();
+    await link.press("Enter");
+    await expect(page).toHaveURL(new RegExp("#" + id + "$"));
+    await expect(page.locator("#" + id)).toBeFocused();
+    await expect.poll(async () => (await page.locator("#" + id).boundingBox())!.y).toBeGreaterThanOrEqual(0);
+  }
 });
